@@ -30,6 +30,10 @@ See:
 
 `npm run-script build`
 
+## Architecture
+
+![Image of the architecture](images/architecture/architecture.png)
+
 ## Run!
 
 `npm run-script start`
