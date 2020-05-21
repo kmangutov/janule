@@ -8,6 +8,8 @@
         "axios": "^0.19.2",
         "discord.js": "^12.2.0",
         "mongoose": "^5.9.15",
+    },
+    "devDependencies": {
         "prettier": "^2.0.5"
     },
     "scripts": {
