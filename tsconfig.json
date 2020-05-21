@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "rootDir": "src",
+        "outDir": "build/",
+        "sourceMap": true
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

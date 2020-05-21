@@ -12,7 +12,7 @@
 
 `npm install <package name>`
 
-For "dev" dependencies (like `prettier`), use `--saveDev`.
+For "dev" dependencies (like `prettier`), use `--save-dev`.
 
 ## `prettier` file formatting
 
@@ -24,13 +24,10 @@ See:
  * https://prettier.io/docs/en/options.html
  * https://prettier.io/docs/en/configuration.html
 
-## Build and deploy
+## Build
 
-1. ???
+`npm run-script build`
 
-## Borg
+## Run!
 
-## Features:
-* placeholder
-* placeholder
-* placeholder
+`npm run-script start`
