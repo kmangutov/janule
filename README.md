@@ -4,9 +4,25 @@
 
 1. ```npm install```
 
-2. Set up config.json with Discord token and Mongodb/mlab.com url
+2. Set up `config.json` with Discord token and Mongodb/mlab.com url
 
-3. ```node index.js```
+3. ```npm run-scripts start```
+
+## Installing dependencies
+
+`npm install <package name>`
+
+For "dev" dependencies (like `prettier`), use `--saveDev`.
+
+## `prettier` file formatting
+
+This will clean up everything in `src/`:
+
+`npm run-script clean`
+
+See:
+ * https://prettier.io/docs/en/options.html
+ * https://prettier.io/docs/en/configuration.html
 
 ## Build and deploy
 
