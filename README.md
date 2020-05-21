@@ -1,4 +1,6 @@
-# **janule** is a [Discord](https://discord.com/) bot which helps with meme storage.
+# Don't let your memes be dreams
+
+**janule** is a [Discord](https://discord.com/) bot which helps with meme storage.
 
 # __Please run `npm run-scripts all` before committing!__
 
