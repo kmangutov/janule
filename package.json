@@ -8,5 +8,8 @@
         "axios": "^0.19.2",
         "discord.js": "^12.2.0",
         "mongoose": "^5.9.15"
+    },
+    "scripts": {
+      "start": "node index.js"
     }
 }

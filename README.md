@@ -6,7 +6,7 @@
 
 2. Set up config.json with Discord token and Mongodb/mlab.com url
 
-3. ```node index.js```
+3. ```npm run-scripts start```
 
 ## Build and deploy
 

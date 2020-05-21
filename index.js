@@ -1,4 +1,5 @@
 // TODO: use typescript
+// TODO: set up prettier
 
 const Discord = require('discord.js')
 const client = new Discord.Client()
