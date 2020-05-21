@@ -28,6 +28,10 @@ See:
 
 1. ???
 
+## Architecture
+
+![Image of the architecture](images/architecture/architecture.png)
+
 ## Borg
 
 ## Features:
