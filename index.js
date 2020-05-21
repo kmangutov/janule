@@ -35,9 +35,13 @@ db.once('open', function() {
             Meme.collection.insert([{name: param}])
         } else if (message.content === CMD_GET) {
             const memes = Meme.collection.find()
-            memes.forEach((meme) => {
-                message.channel.send(meme.name)
-            })
+            memes.toArray().then(documents => {
+                const results = documents.map((value, index) => {
+                    return index + ": " + value.name;
+                })
+                message.channel.send('Current Memes: \n' + results.join("\n"));                    
+                }
+            );
         }
     })
 })
