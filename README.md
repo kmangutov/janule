@@ -14,6 +14,16 @@
 
 For "dev" dependencies (like `prettier`), use `--saveDev`.
 
+## `prettier` file formatting
+
+This will clean up everything in `src/`:
+
+`npm run-script clean`
+
+See:
+ * https://prettier.io/docs/en/options.html
+ * https://prettier.io/docs/en/configuration.html
+
 ## Build and deploy
 
 1. ???
