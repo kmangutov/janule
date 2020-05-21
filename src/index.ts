@@ -1,10 +1,7 @@
-// TODO(lucas): Set up minifier (uglifier-js)
-// TODO(lucas): Set up basic testing
-
 import Discord from 'discord.js';
 import mongoose from 'mongoose';
 
-// TODO(lucas): Get `config.json` working.
+// TODO(https://github.com/kmangutov/janule/issues/11): Get `config.json` working.
 const config = {
     db: '',
     token: '',
