@@ -4,9 +4,15 @@
 
 1. ```npm install```
 
-2. Set up config.json with Discord token and Mongodb/mlab.com url
+2. Set up `config.json` with Discord token and Mongodb/mlab.com url
 
 3. ```npm run-scripts start```
+
+## Installing dependencies
+
+`npm install <package name>`
+
+For "dev" dependencies (like `prettier`), use `--saveDev`.
 
 ## Build and deploy
 
