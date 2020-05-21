@@ -1,5 +1,7 @@
 # **janule** is a [Discord](https://discord.com/) bot which helps with meme storage.
 
+# __Please run `npm run-scripts all` before committing!__
+
 ## Developer environment setup
 
 1. ```npm install```
