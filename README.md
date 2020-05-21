@@ -1,5 +1,7 @@
 # **janule** is a [Discord](https://discord.com/) bot which helps with meme storage.
 
+# __Please run `npm run-scripts all` before committing!__
+
 ## Developer environment setup
 
 1. ```npm install```
@@ -12,7 +14,7 @@
 
 `npm install <package name>`
 
-For "dev" dependencies (like `prettier`), use `--saveDev`.
+For "dev" dependencies (like `prettier`), use `--save-dev`.
 
 ## `prettier` file formatting
 
@@ -24,17 +26,14 @@ See:
  * https://prettier.io/docs/en/options.html
  * https://prettier.io/docs/en/configuration.html
 
-## Build and deploy
+## Build
 
-1. ???
+`npm run-script build`
 
 ## Architecture
 
 ![Image of the architecture](images/architecture/architecture.png)
 
-## Borg
+## Run!
 
-## Features:
-* placeholder
-* placeholder
-* placeholder
+`npm run-script start`
