@@ -30,6 +30,7 @@ db.once('open', function () {
     const CMD_GET = '!getmemes';
 
     client.on('message', (message: any) => {
+        const username = message.author.username + '#' + message.author.discriminator;
         if (!message.content.startsWith('!')) {
             return;
         } else if (message.content.startsWith(CMD_ADD)) {
@@ -37,17 +38,18 @@ db.once('open', function () {
             Meme.collection.insert([
                 {
                     name: param,
+                    creator: username,
                 },
             ]);
         } else if (message.content === CMD_GET) {
             const memes = Meme.collection.find();
-            memes.toArray().then(documents => {
+            memes.toArray().then((documents) => {
                 const results = documents.map((value, index) => {
-                    return index + ": " + value.name;
-                })
-                message.channel.send('Current Memes: \n' + results.join("\n"));                    
-                }
-            );
+                    const creator = value.creator ?? 'Unknown';
+                    return index + ': ' + value.name + ' \n Created By: ' + creator;
+                });
+                message.channel.send('Current Memes: \n' + results.join('\n'));
+            });
         }
     });
 });
