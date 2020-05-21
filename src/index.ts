@@ -1,32 +1,38 @@
-// TODO: use typescript
+// TODO(lucas): Set up minifier (uglifier-js)
+// TODO(lucas): Set up basic testing
 
-const Discord = require('discord.js');
+import Discord from 'discord.js';
+import mongoose from 'mongoose';
+
+// TODO(lucas): Get `config.json` working.
+const config = {
+    db: '',
+    token: '',
+};
+
 const client = new Discord.Client();
-const config = require('./config.json');
-
-var mongoose = require('mongoose');
-const mlab = config.db;
-client.login(config.token);
+const mlab = (<any>config).db;
+client.login((<any>config).token);
 mongoose.connect(mlab);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.info('helo wrld');
+    console.info('WELCOME TO JANULE .. BOT... HI');
 
-    var MemeScheme = mongoose.Schema({
+    let MemeScheme = mongoose.Schema({
         name: String,
     });
-    var Meme = mongoose.model('Meme', MemeScheme, 'memes');
+    let Meme = mongoose.model('Meme', MemeScheme, 'memes');
     const memes = Meme.collection.find();
-    memes.forEach(function (meme) {
+    memes.forEach((meme: any) => {
         console.info(meme);
     });
 
     const CMD_ADD = '!addmeme';
     const CMD_GET = '!getmemes';
 
-    client.on('message', (message) => {
+    client.on('message', (message: any) => {
         if (!message.content.startsWith('!')) {
             return;
         } else if (message.content.startsWith(CMD_ADD)) {
