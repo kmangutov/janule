@@ -2,7 +2,7 @@
 
 ## Developer environment setup
 
-1. ```npm install``
+1. ```npm install```
 
 2. Set up config.json with Discord token and Mongodb/mlab.com url
 
