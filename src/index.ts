@@ -15,7 +15,7 @@ mongoose.connect(mlab);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.info('WELCOME TO JANULE .. BOT... HI');
+    console.info('WELCOME TO JANULE .. BOT.. HI');
 
     let MemeScheme = mongoose.Schema({
         name: String,
