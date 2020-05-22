@@ -10,9 +10,12 @@ const DISCORD_NAME_REGEX = /(.*)#(\d{4})/g;
 const client = new Discord.Client();
 client.login(dbToken);
 
+let isDbConnected = false;
+
 mongoose
     .connect(dbUrl, { useNewUrlParser: true })
     .then(() => {
+        isDbConnected = true;
         return console.info(`Successfully connected to ${dbUrl}`);
     })
     .catch((error) => {
@@ -32,6 +35,10 @@ let PersonScheme = new mongoose.Schema({
 let Users = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
 client.on('message', async (message: any) => {
+    if (!isDbConnected) {
+        return;
+    }
+
     const username = message.author.username + '#' + message.author.discriminator;
     Users.find({
         name: username,
@@ -90,6 +97,10 @@ client.on('message', async (message: any) => {
                 });
                 message.channel.send('Current Memes: \n' + resultStrings.join('\n'));
             });
+            break;
+        case Command.Roll:
+            const result = Math.floor(Math.random() * Number(args[0])) + 1;
+            message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);
             break;
     }
 });
