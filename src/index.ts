@@ -66,7 +66,7 @@ client.on('message', async (message: any) => {
             });
             break;
         case Command.GetMemes:
-            let memes = Meme.collection.find();
+            const memes = Meme.collection.find();
             memes.toArray().then(async (documents) => {
                 let results = documents.map((value) => {
                     return {
