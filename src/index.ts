@@ -65,7 +65,6 @@ type Command = {
     args: (string | number)[];
 };
 
-// Returns `ParseCommand` if successful, null otherwise.
 const parseCommand = (message: string): Command | null => {
     const [command, ...args] = message.split(' ');
 
