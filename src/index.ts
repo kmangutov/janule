@@ -78,8 +78,8 @@ client.on('message', (message: any) => {
             });
             break;
         case Command.Roll:
-            const result = Math.floor(Math.random() * Number(args[0]));
-            message.channel.send(`Rolled a ${result}`);
+            const result = Math.floor(Math.random() * Number(args[0])) + 1;
+            message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);
             break;
     }
 });
