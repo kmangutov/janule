@@ -1,15 +1,12 @@
-import Discord from 'discord.js';
-import mongoose from 'mongoose';
+import * as Discord from 'discord.js';
+import * as mongoose from 'mongoose';
 
-// TODO(https://github.com/kmangutov/janule/issues/11): Get `config.json` working.
-const config = {
-    db: '',
-    token: '',
-};
+import { dbUrl, dbToken } from '../secrets.json';
 
 const client = new Discord.Client();
-const mlab = (<any>config).db;
-client.login((<any>config).token);
+const mlab = dbUrl;
+client.login(dbToken);
+
 mongoose.connect(mlab);
 
 const db = mongoose.connection;
@@ -17,7 +14,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     console.info('WELCOME TO JANULE .. BOT.. HI');
 
-    let MemeScheme = mongoose.Schema({
+    let MemeScheme = new mongoose.Schema({
         name: String,
     });
     let Meme = mongoose.model('Meme', MemeScheme, 'memes');
@@ -45,7 +42,7 @@ db.once('open', function () {
             const memes = Meme.collection.find();
             memes.toArray().then((documents) => {
                 const results = documents.map((value, index) => {
-                    const creator = value.creator ?? 'Unknown';
+                    const creator = value.creator != undefined ? value.creator : 'Unknown';
                     return index + ': ' + value.name + ' \n Created By: ' + creator;
                 });
                 message.channel.send('Current Memes: \n' + results.join('\n'));

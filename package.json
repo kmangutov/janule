@@ -1,24 +1,29 @@
 {
-    "name": "greeter-bot",
-    "version": "1.0.0",
-    "description": "My own Discord bot",
-    "main": "bot.js",
-    "author": "janule",
-    "type": "module",
-    "dependencies": {
-        "axios": "^0.19.2",
-        "discord.js": "^12.2.0",
-        "mongoose": "^5.9.15"
-    },
-    "devDependencies": {
-        "@types/node": "^14.0.4",
-        "prettier": "^2.0.5",
-        "typescript": "^3.9.3"
-    },
-    "scripts": {
-        "start": "node build/index.js",
-        "clean": "npx prettier --write src/*",
-        "build": "rm -rf build && npx tsc --project tsconfig.json",
-        "all": "npm run-script clean && npm run-script build && npm run-script start"
-    }
+  "name": "janule",
+  "main": "build/src/index.js",
+  "version": "0.0.0",
+  "description": ". . . J A N U L E . B O T . . .",
+  "author": "Team Janule <no.email.yet>",
+  "engines": {
+    "node": "14.3.0"
+  },
+  "devDependencies": {
+    "@types/mongoose": "^5.7.21",
+    "@types/node": "~12.12.38",
+    "prettier": "~2.0.5",
+    "tsutils": "~3.17.0",
+    "typescript": "~3.8.3"
+  },
+  "scripts": {
+    "start": "node build/src/index.js",
+    "clean": "npx prettier --write src/*",
+    "build": "rm -rf build && npx tsc --project tsconfig.release.json",
+    "build:watch": "rm -rf build && npx tsc --watch --project tsconfig.release.json",
+    "all": "npm run-script clean && npm run-script build && npm run-script start"
+  },
+  "dependencies": {
+    "tslib": "~1.11.2",
+    "discord.js": "^12.2.0",
+    "mongoose": "^5.9.15"
+  }
 }
