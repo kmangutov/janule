@@ -5,6 +5,8 @@ import { dbUrl, dbToken } from '../secrets.json';
 
 import { parseCommand, Command } from './parse';
 
+const DISCORD_NAME_REGEX = /(.*)#(\d{4})/g;
+
 const client = new Discord.Client();
 client.login(dbToken);
 
@@ -29,7 +31,7 @@ let PersonScheme = new mongoose.Schema({
 });
 let Users = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
-client.on('message', (message: any) => {
+client.on('message', async (message: any) => {
     const username = message.author.username + '#' + message.author.discriminator;
     Users.find({
         name: username,
@@ -38,11 +40,9 @@ client.on('message', (message: any) => {
             console.log(err);
         } else {
             if (Array.isArray(docs) && docs.length == 0) {
-                Users.collection.insert([
-                    {
-                        name: username,
-                    },
-                ]);
+                Users.collection.insertOne({
+                    name: username,
+                });
             }
         }
     });
@@ -53,21 +53,42 @@ client.on('message', (message: any) => {
             // If the message doesn't parse into a command, it is ignored.
             return;
         case Command.AddMeme:
-            Meme.collection.insert([
-                {
-                    name: args[0],
-                    creator: username,
-                },
-            ]);
+            await Meme.collection.insertOne({
+                name: args[0],
+                creator: username,
+            });
             break;
         case Command.GetMemes:
-            const memes = Meme.collection.find();
-            memes.toArray().then((documents) => {
-                const results = documents.map((value, index) => {
-                    const creator = value.creator != undefined ? value.creator : 'Unknown';
-                    return index + ': ' + value.name + ' \n Created By: ' + creator;
+            let memes = Meme.collection.find();
+            memes.toArray().then(async (documents) => {
+                let results = documents.map((value) => {
+                    return {
+                        meme: String(value.name),
+                        creator: String(value.creator ?? 'Unknown'),
+                    };
                 });
-                message.channel.send('Current Memes: \n' + results.join('\n'));
+
+                if (args.length > 0) {
+                    const discordNames = args[0].toString().match(DISCORD_NAME_REGEX);
+                    if (discordNames != null && discordNames.length > 0) {
+                        const userFound = await Users.find({
+                            name: discordNames[0],
+                        }).then((documents) => {
+                            return documents.length > 0;
+                        });
+                        if (userFound) {
+                            results = results.filter((meme) => {
+                                const compare = discordNames[0].localeCompare(meme.creator);
+                                console.log(discordNames[0], meme.creator, compare);
+                                return compare == 0;
+                            });
+                        }
+                    }
+                }
+                const resultStrings = results.map((value, index) => {
+                    return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
+                });
+                message.channel.send('Current Memes: \n' + resultStrings.join('\n'));
             });
             break;
     }
