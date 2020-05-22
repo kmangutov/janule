@@ -3,6 +3,8 @@ import * as mongoose from 'mongoose';
 
 import { dbUrl, dbToken } from '../secrets.json';
 
+import { parseCommand, Command } from './parse';
+
 const client = new Discord.Client();
 const mlab = dbUrl;
 client.login(dbToken);
@@ -26,22 +28,21 @@ db.once('open', function () {
     client.on('message', (message: any) => {
         const username = message.author.username + '#' + message.author.discriminator;
 
-        const command = parseCommand(message.content);
-        if (!command) {
-            // If there is no parsed message, the message was not a valid command.
-            return;
-        }
+        const { command, args } = parseCommand(message.content);
 
-        switch (command.type) {
-            case CommandType.AddMeme:
+        switch (command) {
+            default:
+                // If the message doesn't parse into a command, it is ignored.
+                return;
+            case Command.AddMeme:
                 Meme.collection.insert([
                     {
-                        name: command.args[0],
+                        name: args[0],
                         creator: username,
                     },
                 ]);
                 break;
-            case CommandType.GetMeme:
+            case Command.GetMemes:
                 const memes = Meme.collection.find();
                 memes.toArray().then((documents) => {
                     const results = documents.map((value, index) => {
@@ -54,33 +55,3 @@ db.once('open', function () {
         }
     });
 });
-
-enum CommandType {
-    AddMeme,
-    GetMeme,
-}
-
-type Command = {
-    type: CommandType;
-    args: (string | number)[];
-};
-
-const parseCommand = (message: string): Command | null => {
-    const [command, ...args] = message.split(' ');
-
-    if (command === '!addmeme') {
-        return {
-            type: CommandType.AddMeme,
-            args: args,
-        };
-    }
-
-    if (command === '!getmemes') {
-        return {
-            type: CommandType.GetMeme,
-            args: args,
-        };
-    }
-
-    return null;
-};
