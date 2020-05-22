@@ -4,7 +4,7 @@ export enum Command {
     Roll,
 }
 
-export type Args = (string | number)[];
+type Args = (string | number)[];
 
 const COMMAND_STRING_PARSE_MAP = {
     '!addmeme': Command.AddMeme,
