@@ -8,9 +8,12 @@ import { parseCommand, Command } from './parse';
 const client = new Discord.Client();
 client.login(dbToken);
 
+let isDbConnected = false;
+
 mongoose
     .connect(dbUrl, { useNewUrlParser: true })
     .then(() => {
+        isDbConnected = true;
         return console.info(`Successfully connected to ${dbUrl}`);
     })
     .catch((error) => {
@@ -30,6 +33,10 @@ let PersonScheme = new mongoose.Schema({
 let Users = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
 client.on('message', (message: any) => {
+    if (!isDbConnected) {
+        return;
+    }
+
     const username = message.author.username + '#' + message.author.discriminator;
     Users.find({
         name: username,
@@ -69,6 +76,10 @@ client.on('message', (message: any) => {
                 });
                 message.channel.send('Current Memes: \n' + results.join('\n'));
             });
+            break;
+        case Command.Roll:
+            const result = Math.floor(Math.random() * Number(args[0]));
+            message.channel.send(`Rolled a ${result}`);
             break;
     }
 });
