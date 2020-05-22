@@ -18,6 +18,8 @@
 
 For "dev" dependencies (like `prettier`), use `--save-dev`.
 
+FYI We're using Node v13.3.0
+
 ## `prettier` file formatting
 
 This will clean up everything in `src/`:
