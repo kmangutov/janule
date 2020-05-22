@@ -10,7 +10,7 @@
 
 ## Installing dependencies
 
-  `npm install <package name>`
+`npm install <package name>`
 
 For "dev" dependencies (like `prettier`), use `--save-dev`.
 
@@ -18,7 +18,7 @@ FYI We're using Node v13.3.0
 
 ## `prettier` file formatting
 
-  `npm run-script prettify`
+`npm run-script prettify`
 
 This will clean up everything in `src/`.
 
