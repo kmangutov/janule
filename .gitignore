@@ -1,9 +1,6 @@
 # Node
 node_modules/
 
-# NOTE(lucas): Note sure if we should be doing this.
-package-lock.json
-
 # Basic build
 build/
 
