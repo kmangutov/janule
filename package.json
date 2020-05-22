@@ -16,10 +16,11 @@
   },
   "scripts": {
     "start": "node build/src/index.js",
-    "clean": "npx prettier --write src/*",
+    "clean": "rm -rf node_modules/ build/",
+    "prettify": "npx prettier --write src/*",
     "build": "rm -rf build && npx tsc --project tsconfig.release.json",
     "build:watch": "rm -rf build && npx tsc --watch --project tsconfig.release.json",
-    "all": "npm run-script clean && npm run-script build && npm run-script start"
+    "all": "npm run-script prettify && npm run-script build && npm run-script start"
   },
   "dependencies": {
     "tslib": "~1.11.2",

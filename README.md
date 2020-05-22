@@ -2,15 +2,11 @@
 
 **janule** is a [Discord](https://discord.com/) bot which helps with meme storage.
 
-# __Please run `npm run-scripts all` before committing!__
+## TL;DR
 
-## Developer environment setup
-
-1. ```npm install```
-
-2. Set up `config.json` with Discord token and Mongodb/mlab.com url
-
-3. ```npm run-scripts start```
+1. ```npm install``` to install dependencies
+2. Put secrets for connecting to services in ```secrets.json```
+3. Run ```npm run-scripts all``` (^^do this before committing to make sure everything works^^)
 
 ## Installing dependencies
 
@@ -24,15 +20,11 @@ FYI We're using Node v13.3.0
 
 This will clean up everything in `src/`:
 
-`npm run-script clean`
+`npm run-script prettify`
 
 See:
  * https://prettier.io/docs/en/options.html
  * https://prettier.io/docs/en/configuration.html
-
-## Build
-
-`npm run-script build`
 
 ## Architecture
 
