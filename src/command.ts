@@ -19,7 +19,7 @@ export const handleCommand = async (
             return;
         case Command.AddMeme:
             await Meme.collection.insertOne({
-                // Treat all of the arguments as one strnig so the user doesn't have to use quotes.
+                // Treat all of the arguments as one string so the user doesn't have to use quotes.
                 name: args.join(' '),
                 creator: username,
             });
