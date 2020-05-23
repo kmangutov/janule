@@ -38,7 +38,7 @@ client.on('message', async (message: Discord.Message) => {
         return;
     }
 
-    const models: Models = {
+    const models = {
         Meme: Meme,
         Users: Users,
     };

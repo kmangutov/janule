@@ -19,9 +19,11 @@ export const handleCommand = async (
             return;
         case Command.AddMeme:
             await Meme.collection.insertOne({
-                name: args[0],
+                // Treat all of the arguments as one strnig so the user doesn't have to use quotes.
+                name: args.join(' '),
                 creator: username,
             });
+            message.channel.send(`Successfully added meme: "${args.join(' ')}"`);
             break;
         case Command.GetMemes:
             const memes = Meme.collection.find();
@@ -53,7 +55,7 @@ export const handleCommand = async (
                 const resultStrings = results.map((value, index) => {
                     return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
                 });
-                message.channel.send('Current Memes: \n' + resultStrings.join('\n'));
+                message.channel.send('Current memes: \n' + resultStrings.join('\n'));
             });
             break;
         case Command.Roll:
