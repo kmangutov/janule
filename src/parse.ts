@@ -1,10 +1,4 @@
-export enum Command {
-    AddMeme,
-    GetMemes,
-    Roll,
-}
-
-type Args = (string | number)[];
+import { Args, Command } from './types';
 
 const COMMAND_STRING_PARSE_MAP = {
     '!addmeme': Command.AddMeme,
