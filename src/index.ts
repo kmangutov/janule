@@ -1,11 +1,10 @@
 import * as Discord from 'discord.js';
 import * as mongoose from 'mongoose';
 
+import { handleCommand } from './command';
+import { parseCommand } from './parse';
+
 import { dbUrl, dbToken } from '../secrets.json';
-
-import { parseCommand, Command } from './parse';
-
-const DISCORD_NAME_REGEX = /(.*)#(\d{4})/g;
 
 const client = new Discord.Client();
 client.login(dbToken);
@@ -25,19 +24,24 @@ mongoose
 
 console.info('WELCOME TO JANULE .. BOT.. HI');
 
-let MemeScheme = new mongoose.Schema({
+const MemeScheme = new mongoose.Schema({
     name: String,
 });
-let Meme = mongoose.model('Meme', MemeScheme, 'memes');
-let PersonScheme = new mongoose.Schema({
+const Meme = mongoose.model('Meme', MemeScheme, 'memes');
+const PersonScheme = new mongoose.Schema({
     username: String,
 });
-let Users = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
+const Users = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
-client.on('message', async (message: any) => {
+client.on('message', async (message: Discord.Message) => {
     if (!isDbConnected) {
         return;
     }
+
+    const models: Models = {
+        Meme: Meme,
+        Users: Users,
+    };
 
     const username = message.author.username + '#' + message.author.discriminator;
     Users.find({
@@ -53,54 +57,8 @@ client.on('message', async (message: any) => {
             }
         }
     });
+
     const { command, args } = parseCommand(message.content);
 
-    switch (command) {
-        default:
-            // If the message doesn't parse into a command, it is ignored.
-            return;
-        case Command.AddMeme:
-            await Meme.collection.insertOne({
-                name: args[0],
-                creator: username,
-            });
-            break;
-        case Command.GetMemes:
-            const memes = Meme.collection.find();
-            memes.toArray().then(async (documents) => {
-                let results = documents.map((value) => {
-                    return {
-                        meme: String(value.name),
-                        creator: String(value.creator ?? 'Unknown'),
-                    };
-                });
-
-                if (args.length > 0) {
-                    const discordNames = args[0].toString().match(DISCORD_NAME_REGEX);
-                    if (discordNames != null && discordNames.length > 0) {
-                        const userFound = await Users.find({
-                            name: discordNames[0],
-                        }).then((documents) => {
-                            return documents.length > 0;
-                        });
-                        if (userFound) {
-                            results = results.filter((meme) => {
-                                const compare = discordNames[0].localeCompare(meme.creator);
-                                console.log(discordNames[0], meme.creator, compare);
-                                return compare == 0;
-                            });
-                        }
-                    }
-                }
-                const resultStrings = results.map((value, index) => {
-                    return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
-                });
-                message.channel.send('Current Memes: \n' + resultStrings.join('\n'));
-            });
-            break;
-        case Command.Roll:
-            const result = Math.floor(Math.random() * Number(args[0])) + 1;
-            message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);
-            break;
-    }
+    handleCommand(command, args, username, message, models);
 });
