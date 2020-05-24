@@ -23,8 +23,10 @@
     "all": "npm run-script prettify && npm run-script build && npm run-script start"
   },
   "dependencies": {
-    "tslib": "~1.11.2",
+    "apollo-server": "^2.13.1",
     "discord.js": "^12.2.0",
-    "mongoose": "^5.9.15"
+    "mongoose": "^5.9.15",
+    "neo4j-graphql-js": "^2.14.2",
+    "tslib": "~1.11.2"
   }
 }
