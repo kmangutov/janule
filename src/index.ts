@@ -6,6 +6,8 @@ import { parseCommand } from './parse';
 
 import { dbUrl, dbToken } from '../secrets.json';
 
+import { Users } from './users';
+
 const client = new Discord.Client();
 client.login(dbToken);
 
@@ -26,37 +28,36 @@ console.info('WELCOME TO JANULE .. BOT.. HI');
 
 const MemeScheme = new mongoose.Schema({
     name: String,
+    creator: String,
 });
 const Meme = mongoose.model('Meme', MemeScheme, 'memes');
+
 const PersonScheme = new mongoose.Schema({
     username: String,
 });
-const Users = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
+const UserModel = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
+
+const models = {
+    Meme: Meme,
+    Users: UserModel,
+};
+
+const users = new Users(UserModel);
 
 client.on('message', async (message: Discord.Message) => {
     if (!isDbConnected) {
         return;
     }
 
-    const models = {
-        Meme: Meme,
-        Users: Users,
-    };
-
     const username = message.author.username + '#' + message.author.discriminator;
-    Users.find({
-        name: username,
-    }).exec(function (err, docs) {
-        if (err != null) {
-            console.log(err);
-        } else {
-            if (Array.isArray(docs) && docs.length == 0) {
-                Users.collection.insertOne({
-                    name: username,
-                });
-            }
-        }
-    });
+
+    let uid = await users.getUIDForDiscordName(username);
+    if (uid == null) {
+        await users.addUser(username);
+        uid = await users.getUIDForDiscordName(username);
+    }
+
+    console.info('Message received from %s, UID: %s.', username, uid);
 
     const { command, args } = parseCommand(message.content);
 
