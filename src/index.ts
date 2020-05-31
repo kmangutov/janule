@@ -29,6 +29,7 @@ console.info('WELCOME TO JANULE .. BOT.. HI');
 const MemeScheme = new mongoose.Schema({
     name: String,
     creator: String,
+    edges: [String],
 });
 const Meme = mongoose.model('Meme', MemeScheme, 'memes');
 
