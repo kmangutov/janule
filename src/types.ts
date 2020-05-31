@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 export enum Command {
     AddMeme,
     DeleteMeme,
+    GetMeme,
     GetMemes,
     GetUsers,
     Roll,

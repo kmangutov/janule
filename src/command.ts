@@ -33,6 +33,36 @@ export const handleCommand = async (
                 });
             }
             break;
+        case Command.GetMeme:
+            if (args.length > 0) {
+                const memeArg = args.join(' ');
+                Meme.collection
+                    .find()
+                    .toArray()
+                    .then((documents) => {
+                        if (documents.length > 0) {
+                            const results = documents
+                                .filter((item) => String(item.name).search(memeArg) != -1)
+                                .map(
+                                    (value, index) =>
+                                        index +
+                                        1 +
+                                        ': ' +
+                                        value.name +
+                                        '\n\tCreated By: ' +
+                                        (value.creator ?? 'Unknown') +
+                                        '\n\tID: ' +
+                                        value._id,
+                                );
+                            message.channel.send('Results: \n' + results.join('\n'));
+                        } else {
+                            message.channel.send('No memes found that match: ' + memeArg);
+                        }
+                    });
+            } else {
+                message.channel.send('Please specify a meme to get.');
+            }
+            break;
         case Command.GetMemes:
             const memes = Meme.collection.find();
             memes.toArray().then(async (documents) => {
