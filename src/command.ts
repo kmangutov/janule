@@ -25,6 +25,44 @@ export const handleCommand = async (
             });
             message.channel.send(`Successfully added meme: "${args.join(' ')}"`);
             break;
+        case Command.DeleteMeme:
+            if (args.length > 0) {
+                const memeToDelete = args.join(' ');
+                await Meme.collection.deleteOne({
+                    name: memeToDelete,
+                });
+            }
+            break;
+        case Command.GetMeme:
+            if (args.length > 0) {
+                const memeArg = args.join(' ');
+                Meme.collection
+                    .find()
+                    .toArray()
+                    .then((documents) => {
+                        if (documents.length > 0) {
+                            const results = documents
+                                .filter((item) => String(item.name).search(memeArg) != -1)
+                                .map(
+                                    (value, index) =>
+                                        index +
+                                        1 +
+                                        ': ' +
+                                        value.name +
+                                        '\n\tCreated By: ' +
+                                        (value.creator ?? 'Unknown') +
+                                        '\n\tID: ' +
+                                        value._id,
+                                );
+                            message.channel.send('Results: \n' + results.join('\n'));
+                        } else {
+                            message.channel.send('No memes found that match: ' + memeArg);
+                        }
+                    });
+            } else {
+                message.channel.send('Please specify a meme to get.');
+            }
+            break;
         case Command.GetMemes:
             const memes = Meme.collection.find();
             memes.toArray().then(async (documents) => {
@@ -57,6 +95,15 @@ export const handleCommand = async (
                 });
                 message.channel.send('Current memes: \n' + resultStrings.join('\n'));
             });
+            break;
+        case Command.GetUsers:
+            Users.collection
+                .find()
+                .toArray()
+                .then(async (documents) => {
+                    const results = documents.map((value, index) => index + 1 + ': ' + value.name);
+                    message.channel.send('Current Users: \n' + results.join('\n'));
+                });
             break;
         case Command.Roll:
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
