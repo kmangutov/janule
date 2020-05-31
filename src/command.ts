@@ -66,6 +66,15 @@ export const handleCommand = async (
                 message.channel.send('Current memes: \n' + resultStrings.join('\n'));
             });
             break;
+        case Command.GetUsers:
+            Users.collection
+                .find()
+                .toArray()
+                .then(async (documents) => {
+                    const results = documents.map((value, index) => index + 1 + ': ' + value.name);
+                    message.channel.send('Current Users: \n' + results.join('\n'));
+                });
+            break;
         case Command.Roll:
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
             message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);

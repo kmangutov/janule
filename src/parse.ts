@@ -4,6 +4,7 @@ const COMMAND_STRING_PARSE_MAP = {
     '!addmeme': Command.AddMeme,
     '!deletememe': Command.DeleteMeme,
     '!getmemes': Command.GetMemes,
+    '!getusers': Command.GetUsers,
     '!roll': Command.Roll,
 };
 

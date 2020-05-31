@@ -4,6 +4,7 @@ export enum Command {
     AddMeme,
     DeleteMeme,
     GetMemes,
+    GetUsers,
     Roll,
 }
 
