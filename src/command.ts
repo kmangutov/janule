@@ -25,6 +25,14 @@ export const handleCommand = async (
             });
             message.channel.send(`Successfully added meme: "${args.join(' ')}"`);
             break;
+        case Command.DeleteMeme:
+            if (args.length > 0) {
+                const memeToDelete = args.join(' ');
+                await Meme.collection.deleteOne({
+                    name: memeToDelete,
+                });
+            }
+            break;
         case Command.GetMemes:
             const memes = Meme.collection.find();
             memes.toArray().then(async (documents) => {
