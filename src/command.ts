@@ -3,6 +3,8 @@ import * as Discord from 'discord.js';
 import { Args, Command, Models } from './types';
 
 const DISCORD_NAME_REGEX = /(.*)#(\d{4})/g;
+const A_FLAG = '-a';
+const B_FLAG = '-b';
 
 export const handleCommand = async (
     command: Command,
@@ -25,6 +27,41 @@ export const handleCommand = async (
             });
             message.channel.send(`Successfully added meme: "${args.join(' ')}"`);
             break;
+        case Command.AddEdge:
+            const bIndex = args.findIndex((arg) => arg == B_FLAG);
+            if (args[0] == A_FLAG && bIndex != -1) {
+                const memeA = args.slice(1, bIndex).join(' ');
+                const memeB = args.slice(bIndex + 1).join(' ');
+                await Meme.collection
+                    .find()
+                    .toArray()
+                    .then(async (documents) => {
+                        const parsedMemes = documents.map((doc) => {
+                            return {
+                                meme: String(doc.name),
+                                id: String(doc._id),
+                                edges: (doc.edges as Array<string>) ?? [],
+                            };
+                        });
+                        const memeAObj = parsedMemes.find((meme) => meme.meme == memeA);
+                        const memeBObj = parsedMemes.find((meme) => meme.meme == memeB);
+                        if (memeAObj != null && memeBObj != null) {
+                            const newEdges = memeAObj.edges.concat(memeBObj.id);
+                            Meme.collection.updateOne({ name: memeA }, { $set: { edges: newEdges } }, (err) => {
+                                if (err != null) {
+                                    message.channel.send(`Failed to add edge: ${err}`);
+                                } else {
+                                    message.channel.send(`Added ${memeB} to ${memeA}'s edges.`);
+                                }
+                            });
+                        } else {
+                            message.channel.send(`Meme ${memeA} or ${memeB} not found`);
+                        }
+                    });
+            } else {
+                message.channel.send('Usage: !addedge -a memeA -b multi word memeB');
+            }
+            break;
         case Command.DeleteMeme:
             if (args.length > 0) {
                 const memeToDelete = args.join(' ');
@@ -41,19 +78,35 @@ export const handleCommand = async (
                     .toArray()
                     .then((documents) => {
                         if (documents.length > 0) {
-                            const results = documents
-                                .filter((item) => String(item.name).search(memeArg) != -1)
-                                .map(
-                                    (value, index) =>
+                            const parsedResults = documents.map((doc) => {
+                                return {
+                                    meme: String(doc.name),
+                                    creator: String(doc.creator) ?? 'Unknown',
+                                    id: String(doc._id),
+                                    edges: doc.edges ?? [],
+                                };
+                            });
+                            const results = parsedResults
+                                .filter((item) => String(item.meme).search(memeArg) != -1)
+                                .map((value, index) => {
+                                    const memeEdgeNames = value.edges.map((id: string) => {
+                                        const memeEdge = parsedResults.find((item) => item.id === id);
+                                        return memeEdge.meme;
+                                    });
+                                    const edges =
+                                        memeEdgeNames.length > 0 ? '\n\tEdges: ' + memeEdgeNames.join(', ') : '';
+                                    return (
                                         index +
                                         1 +
                                         ': ' +
-                                        value.name +
+                                        value.meme +
                                         '\n\tCreated By: ' +
-                                        (value.creator ?? 'Unknown') +
+                                        value.creator +
                                         '\n\tID: ' +
-                                        value._id,
-                                );
+                                        value.id +
+                                        edges
+                                    );
+                                });
                             message.channel.send('Results: \n' + results.join('\n'));
                         } else {
                             message.channel.send('No memes found that match: ' + memeArg);
@@ -82,11 +135,7 @@ export const handleCommand = async (
                             return documents.length > 0;
                         });
                         if (userFound) {
-                            results = results.filter((meme) => {
-                                const compare = discordNames[0].localeCompare(meme.creator);
-                                console.log(discordNames[0], meme.creator, compare);
-                                return compare == 0;
-                            });
+                            results = results.filter((meme) => discordNames[0].localeCompare(meme.creator) == 0);
                         }
                     }
                 }
