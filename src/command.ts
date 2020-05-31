@@ -94,7 +94,7 @@ export const handleCommand = async (
                                         return memeEdge.meme;
                                     });
                                     const edges =
-                                        memeEdgeNames.length > 0 ? '\n\tEdges: ' + memeEdgeNames.join(', ') : null;
+                                        memeEdgeNames.length > 0 ? '\n\tEdges: ' + memeEdgeNames.join(', ') : '';
                                     return (
                                         index +
                                         1 +
