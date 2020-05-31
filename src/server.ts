@@ -1,11 +1,11 @@
 //import { Server } from "http";
-
+var path = require('path');
 const express = require( "express" );
 const app = express();
 const port = 8080; // default port to listen
 
 //app.arguments();
-app.use(express.static('/web', express.static(__dirname + '/web')))
+app.use(express.static(path.join(__dirname, 'web')));
 app.listen(port);
 
 

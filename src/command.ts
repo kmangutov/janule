@@ -31,7 +31,7 @@ export const handleCommand = async (
                 let results = documents.map((value) => {
                     return {
                         meme: String(value.name),
-                        creator: String(value.creator ?? 'Unknown'),
+                        creator: String(value.creator? value.creator : 'Unknown'),
                     };
                 });
 
