@@ -1,0 +1,25 @@
+<script src="https://unpkg.com/d3-dag@0.2.3"></script>
+<script>
+
+triangle = [
+  {
+    "id": "0",
+    "parentIds": []
+  },
+  {
+    "id": "1",
+    "parentIds": ["0"]
+  },
+  {
+    "id": "2",
+    "parentIds": ["0", "1"]
+  }
+]
+
+var dag = d3.sugiyama();
+dag.dagHierarchy(triangle)
+
+</script>
+
+
+
