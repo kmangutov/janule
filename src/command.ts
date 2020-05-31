@@ -25,6 +25,14 @@ export const handleCommand = async (
             });
             message.channel.send(`Successfully added meme: "${args.join(' ')}"`);
             break;
+        case Command.DeleteMeme:
+            if (args.length > 0) {
+                const memeToDelete = args.join(' ');
+                await Meme.collection.deleteOne({
+                    name: memeToDelete,
+                });
+            }
+            break;
         case Command.GetMemes:
             const memes = Meme.collection.find();
             memes.toArray().then(async (documents) => {
@@ -57,6 +65,15 @@ export const handleCommand = async (
                 });
                 message.channel.send('Current memes: \n' + resultStrings.join('\n'));
             });
+            break;
+        case Command.GetUsers:
+            Users.collection
+                .find()
+                .toArray()
+                .then(async (documents) => {
+                    const results = documents.map((value, index) => index + 1 + ': ' + value.name);
+                    message.channel.send('Current Users: \n' + results.join('\n'));
+                });
             break;
         case Command.Roll:
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
