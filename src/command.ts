@@ -87,7 +87,10 @@ export const handleCommand = async (
                                 };
                             });
                             const results = parsedResults
-                                .filter((item) => String(item.meme).search(memeArg) != -1)
+                                .filter(
+                                    (item) =>
+                                        String(item.meme).toLocaleLowerCase().search(memeArg.toLocaleLowerCase()) != -1,
+                                )
                                 .map((value, index) => {
                                     const memeEdgeNames = value.edges.map((id: string) => {
                                         const memeEdge = parsedResults.find((item) => item.id === id);
@@ -122,7 +125,7 @@ export const handleCommand = async (
                 let results = documents.map((value) => {
                     return {
                         meme: String(value.name),
-                        creator: String(value.creator? value.creator : 'Unknown'),
+                        creator: String(value.creator ? value.creator : 'Unknown'),
                     };
                 });
 
@@ -139,10 +142,17 @@ export const handleCommand = async (
                         }
                     }
                 }
-                const resultStrings = results.map((value, index) => {
-                    return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
-                });
-                message.channel.send('Current memes: \n' + resultStrings.join('\n'));
+                let resultString = results
+                    .map((value, index) => {
+                        return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
+                    })
+                    .join('\n');
+                // Discord has a message length cap of 2000 characters and 'Current memes: \n' is 16 characters.
+                // Not a reference to 1984
+                if (resultString.length > 1984) {
+                    resultString = resultString.slice(0, 1984);
+                }
+                message.channel.send('Current memes: \n' + resultString);
             });
             break;
         case Command.GetUsers:
@@ -158,5 +168,13 @@ export const handleCommand = async (
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
             message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);
             break;
+        case Command.RollMeme:
+            Meme.collection
+                .find()
+                .toArray()
+                .then((documents) => {
+                    const idx = Math.floor(Math.random() * documents.length) + 1;
+                    message.channel.send(documents[idx].name);
+                });
     }
 };
