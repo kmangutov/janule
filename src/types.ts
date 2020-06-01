@@ -8,6 +8,7 @@ export enum Command {
     GetMemes,
     GetUsers,
     Roll,
+    RollMeme,
 }
 
 export type Args = (string | number)[];

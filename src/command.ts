@@ -158,5 +158,13 @@ export const handleCommand = async (
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
             message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);
             break;
+        case Command.RollMeme:
+            Meme.collection
+                .find()
+                .toArray()
+                .then((documents) => {
+                    const idx = Math.floor(Math.random() * documents.length) + 1;
+                    message.channel.send(documents[idx].name);
+                });
     }
 };
