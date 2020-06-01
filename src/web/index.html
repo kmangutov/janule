@@ -1,6 +1,6 @@
 <!-- Example from http://bl.ocks.org/jose187/4733747 -->
 
-<h1>yo</h1>
+<h1>Meme Graph</h1>
 
 <script src="https://d3js.org/d3.v2.min.js?2.9.3"></script>
 <style>
@@ -37,7 +37,7 @@
         .charge(-100)
         .size([width, height]);
     
-    d3.json("nodes.json", function(json) {
+    d3.json("/nodes", function(json) {
       force
           .nodes(json.nodes)
           .links(json.links)
