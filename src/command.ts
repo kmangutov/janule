@@ -87,7 +87,10 @@ export const handleCommand = async (
                                 };
                             });
                             const results = parsedResults
-                                .filter((item) => String(item.meme).search(memeArg) != -1)
+                                .filter(
+                                    (item) =>
+                                        String(item.meme).toLocaleLowerCase().search(memeArg.toLocaleLowerCase()) != -1,
+                                )
                                 .map((value, index) => {
                                     const memeEdgeNames = value.edges.map((id: string) => {
                                         const memeEdge = parsedResults.find((item) => item.id === id);
@@ -122,7 +125,7 @@ export const handleCommand = async (
                 let results = documents.map((value) => {
                     return {
                         meme: String(value.name),
-                        creator: String(value.creator? value.creator : 'Unknown'),
+                        creator: String(value.creator ? value.creator : 'Unknown'),
                     };
                 });
 
