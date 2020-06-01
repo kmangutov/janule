@@ -3,18 +3,35 @@ import { Models } from './types';
 // Format from http://bl.ocks.org/jose187/4733747
 // Given Memes, convert to graph format.
 const memesToDag = async (memes) => {
-    var nodeUuidToNameMap = {};
-    var memeToInt = {};
+    var memeIDToInt = {};
     var counter = 0;
+
+    let parsedMemes = memes.map((meme) => {
+        return {
+            name: meme.name,
+            uid: meme._id,
+            edges: meme.edges as Array<string>,
+            display: false,
+        };
+    });
+
+    parsedMemes.map((meme) => {
+        if (meme.edges?.length > 0 ?? false) {
+            meme.display = true;
+            meme.edges.map((edge) => {
+                const targetMeme = parsedMemes.find((item) => item.uid == edge);
+                targetMeme.display = true;
+            });
+        }
+    });
+    parsedMemes = parsedMemes.filter((item) => item.display);
 
     // Each node must have an integer index. Make a list of nodes and use counter to create an index.
     // Node name should be the meme text, so we must also keep a Uuid map to build edge graph.
     var nodes = [];
-    memes.forEach((meme) => {
-        nodeUuidToNameMap[meme._id] = meme.name;
-
+    parsedMemes.forEach((meme) => {
         var newMemeIntId = counter++;
-        memeToInt[meme.name] = newMemeIntId;
+        memeIDToInt[meme.uid] = newMemeIntId;
         nodes.push({
             name: meme.name,
             group: newMemeIntId,
@@ -23,12 +40,12 @@ const memesToDag = async (memes) => {
 
     // Now we can build the edge graph, resolving Uuids to integer indicies created earlier.
     var links = [];
-    memes.forEach((meme) => {
+    parsedMemes.forEach((meme) => {
         if (meme.edges) {
             meme.edges.forEach((edge) => {
                 links.push({
-                    source: memeToInt[meme.name],
-                    target: memeToInt[nodeUuidToNameMap[edge]],
+                    source: memeIDToInt[meme.uid],
+                    target: memeIDToInt[edge],
                     weight: 1,
                 });
             });
