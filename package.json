@@ -18,13 +18,15 @@
     "start": "node build/src/index.js",
     "clean": "rm -rf node_modules/ build/",
     "prettify": "npx prettier --write src/*",
-    "build": "rm -rf build && npx tsc --project tsconfig.release.json",
+    "build": "rm -rf build && npx tsc --project tsconfig.release.json && npx mkdirp build/src/web && cp src/web/* build/src/web/",
     "build:watch": "rm -rf build && npx tsc --watch --project tsconfig.release.json",
     "all": "npm run-script prettify && npm run-script build && npm run-script start"
   },
   "dependencies": {
-    "tslib": "~1.11.2",
     "discord.js": "^12.2.0",
-    "mongoose": "^5.9.15"
+    "express": "^4.17.1",
+    "mongoose": "^5.9.15",
+    "node": "^14.3.0",
+    "tslib": "~1.11.2"
   }
 }
