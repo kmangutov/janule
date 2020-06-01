@@ -139,10 +139,17 @@ export const handleCommand = async (
                         }
                     }
                 }
-                const resultStrings = results.map((value, index) => {
-                    return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
-                });
-                message.channel.send('Current memes: \n' + resultStrings.join('\n'));
+                let resultString = results
+                    .map((value, index) => {
+                        return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
+                    })
+                    .join('\n');
+                // Discord has a message length cap of 2000 characters and 'Current memes: \n' is 16 characters.
+                // Not a reference to 1984
+                if (resultString.length > 1984) {
+                    resultString = resultString.slice(0, 1984);
+                }
+                message.channel.send('Current memes: \n' + resultString);
             });
             break;
         case Command.GetUsers:
