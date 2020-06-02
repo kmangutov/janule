@@ -1,6 +1,7 @@
 import * as Discord from 'discord.js';
 
 import { Args, Command, Models } from './types';
+import { COMMAND_STRING_PARSE_MAP } from './parse';
 
 const DISCORD_NAME_REGEX = /(.*)#(\d{4})/g;
 const A_FLAG = '-a';
@@ -163,6 +164,10 @@ export const handleCommand = async (
                     const results = documents.map((value, index) => index + 1 + ': ' + value.name);
                     message.channel.send('Current Users: \n' + results.join('\n'));
                 });
+            break;
+        case Command.Help:
+            const keys = Object.keys(COMMAND_STRING_PARSE_MAP);
+            message.channel.send(`Available Commands: \n\t${keys.join('\n\t')}`);
             break;
         case Command.Roll:
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
