@@ -201,7 +201,6 @@ export const handleCommand = async (
                         message.channel.send('I appreciate you, but my thanks count is broken :(');
                     }
                 });
-            message.channel.send('Thanks recieved!');
             break;
     }
 };
