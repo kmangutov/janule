@@ -14,7 +14,7 @@ export const handleCommand = async (
     message: Discord.Message,
     models: Models,
 ) => {
-    const { Meme, Users } = models;
+    const { Meme, Users, Janule } = models;
 
     switch (command) {
         default:
@@ -181,5 +181,27 @@ export const handleCommand = async (
                     const idx = Math.floor(Math.random() * documents.length) + 1;
                     message.channel.send(documents[idx].name);
                 });
+            break;
+        case Command.Thanks:
+            await Janule.collection
+                .find()
+                .toArray()
+                .then(async (documents) => {
+                    if (documents.length == 1) {
+                        const thanks = documents[0];
+                        const updatedThanks = await Janule.findOneAndUpdate(
+                            { thanksCount: thanks.thanksCount },
+                            { $set: { thanksCount: thanks.thanksCount + 1 } },
+                            { new: true },
+                        );
+                        message.channel.send(
+                            `I appreciate you! I've been thanked ${updatedThanks.toObject().thanksCount} times!`,
+                        );
+                    } else {
+                        message.channel.send('I appreciate you, but my thanks count is broken :(');
+                    }
+                });
+            message.channel.send('Thanks recieved!');
+            break;
     }
 };

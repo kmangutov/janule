@@ -13,6 +13,7 @@ export const COMMAND_STRING_PARSE_MAP = {
     help: Command.Help,
     roll: Command.Roll,
     rollmeme: Command.RollMeme,
+    thanks: Command.Thanks,
 };
 
 export const parseCommand = (message: string): { command?: Command; args?: Args } => {
