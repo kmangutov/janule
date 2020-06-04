@@ -33,6 +33,11 @@ const PersonScheme = new mongoose.Schema({
 });
 const UserModel = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
+const JanuleStatsSchema = new mongoose.Schema({
+    thanksCount: Number,
+});
+const JanuleModel = mongoose.model('JanuleStats', JanuleStatsSchema, 'janule_stats');
+
 const models = {
     Janule: JanuleModel,
     Users: UserModel,

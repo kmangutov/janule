@@ -7,8 +7,10 @@ export enum Command {
     GetMeme,
     GetMemes,
     GetUsers,
+    Help,
     Roll,
     RollMeme,
+    Thanks,
 }
 
 export type Args = (string | number)[];

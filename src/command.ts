@@ -1,11 +1,8 @@
 import * as Discord from 'discord.js';
 
 import { Args, Command, Models } from './types';
-<<<<<<< HEAD
-=======
 import MemeController from './controllers/meme.controller';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
->>>>>>> d1489ec... Refactored command.ts and broke out User and Memes into their own models and controller
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
@@ -17,11 +14,7 @@ export const handleCommand = async (
     message: Discord.Message,
     models: Models,
 ) => {
-<<<<<<< HEAD
-    const { Meme, Users } = models;
-=======
     const { Users, Janule } = models;
->>>>>>> d1489ec... Refactored command.ts and broke out User and Memes into their own models and controller
 
     switch (command) {
         default:
@@ -127,20 +120,15 @@ export const handleCommand = async (
                     message.channel.send('Current Users: \n' + results.join('\n'));
                 });
             break;
+        case Command.Help:
+            const keys = Object.keys(COMMAND_STRING_PARSE_MAP);
+            message.channel.send(`Available Commands: \n\t${keys.join('\n\t')}`);
+            break;
         case Command.Roll:
             const result = Math.floor(Math.random() * Number(args[0])) + 1;
             message.channel.send(`Rolled a ${result === 56 ? 'janule' : result}`);
             break;
         case Command.RollMeme:
-<<<<<<< HEAD
-            Meme.collection
-                .find()
-                .toArray()
-                .then((documents) => {
-                    const idx = Math.floor(Math.random() * documents.length) + 1;
-                    message.channel.send(documents[idx].name);
-                });
-=======
             const randomMeme = await MemeController.RollMeme();
             message.channel.send(randomMeme.name);
             break;
@@ -164,6 +152,5 @@ export const handleCommand = async (
                     }
                 });
             break;
->>>>>>> d1489ec... Refactored command.ts and broke out User and Memes into their own models and controller
     }
 };

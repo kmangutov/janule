@@ -1,6 +1,6 @@
 import { Args, Command } from './types';
 
-const COMMAND_STRING_PARSE_MAP = {
+export const COMMAND_STRING_PARSE_MAP = {
     '!addmeme': Command.AddMeme,
     '!addedge': Command.AddEdge,
     '!deletememe': Command.DeleteMeme,
