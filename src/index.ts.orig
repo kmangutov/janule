@@ -33,14 +33,14 @@ const PersonScheme = new mongoose.Schema({
 });
 const UserModel = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
-const JanuleStatsSchema = new mongoose.Schema({
-    thanksCount: Number,
-});
-const JanuleModel = mongoose.model('JanuleStats', JanuleStatsSchema, 'janule_stats');
-
 const models = {
+<<<<<<< HEAD
+    Meme: Meme,
+=======
     Janule: JanuleModel,
+>>>>>>> d1489ec... Refactored command.ts and broke out User and Memes into their own models and controller
     Users: UserModel,
+    Memes: Meme,
 };
 
 const users = new Users(UserModel);
