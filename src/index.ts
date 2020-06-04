@@ -8,7 +8,6 @@ import { webServer } from './server';
 import { dbUrl, dbToken } from '../secrets.json';
 
 import { Users } from './users';
-import Meme from './models/meme.model';
 
 const client = new Discord.Client();
 client.login(dbToken);
