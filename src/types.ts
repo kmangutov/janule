@@ -11,6 +11,7 @@ export enum Command {
     Roll,
     RollMeme,
     Thanks,
+    Synth,
 }
 
 export type Args = (string | number)[];

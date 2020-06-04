@@ -152,5 +152,31 @@ export const handleCommand = async (
                     }
                 });
             break;
+        case Command.Synth:
+            const randomSynthMeme = await MemeController.RollMeme();
+            if (args.length > 0) {
+                let foundMemes = await MemeController.FindMemes(args.join(' '));
+                let randomIdx = Math.floor(foundMemes.length * Math.random());
+                console.log(foundMemes.length);
+                if (foundMemes.length == 0) {
+                    foundMemes = [await MemeController.RollMeme()];
+                    randomIdx = 0;
+                } else {
+                    if (foundMemes[randomIdx].edges.length > 0) {
+                        const edgeMemes = await MemeController.GetMemesByID(foundMemes[randomIdx].edges);
+                        foundMemes = foundMemes.concat(edgeMemes);
+                        randomIdx = Math.floor(foundMemes.length * Math.random());
+                    }
+                }
+                message.channel.send(`Try this: ${foundMemes[randomIdx].name} ${randomSynthMeme.name}`);
+            } else {
+                const memeAName = randomSynthMeme.name;
+                const randomMemeB = await MemeController.RollMeme();
+                const memeBName = randomMemeB.name;
+                message.channel.send(
+                    `How about: ${memeAName.substr(0, memeAName.length / 2)}${memeBName.substr(memeBName.length / 2)}`,
+                );
+            }
+            break;
     }
 };

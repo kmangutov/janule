@@ -14,6 +14,7 @@ export const COMMAND_STRING_PARSE_MAP = {
     roll: Command.Roll,
     rollmeme: Command.RollMeme,
     thanks: Command.Thanks,
+    synth: Command.Synth,
 };
 
 export const parseCommand = (message: string): { command?: Command; args?: Args } => {

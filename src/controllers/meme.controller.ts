@@ -72,7 +72,12 @@ async function DeleteMeme(meme: IMeme['name']): Promise<void> {
 }
 
 async function RollMeme(): Promise<IMeme> {
-    return await Meme.collection.aggregate([{ $sample: { size: 1 } }]).next();
+    return await Meme.collection
+        .aggregate([{ $sample: { size: 1 } }])
+        .next()
+        .then((documents) => {
+            return documents;
+        });
 }
 
 export default {
