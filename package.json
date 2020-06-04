@@ -17,7 +17,7 @@
   "scripts": {
     "start": "node build/src/index.js",
     "clean": "rm -rf node_modules/ build/",
-    "prettify": "npx prettier --write src/*",
+    "prettify": "npx prettier --write src/**/*",
     "build": "rm -rf build && npx tsc --project tsconfig.release.json && npx mkdirp build/src/web && cp src/web/* build/src/web/",
     "build:watch": "rm -rf build && npx tsc --watch --project tsconfig.release.json",
     "all": "npm run-script prettify && npm run-script build && npm run-script start"

@@ -8,6 +8,7 @@ import { webServer } from './server';
 import { dbUrl, dbToken } from '../secrets.json';
 
 import { Users } from './users';
+import Meme from './models/meme.model';
 
 const client = new Discord.Client();
 client.login(dbToken);
@@ -27,21 +28,15 @@ mongoose
 
 console.info('WELCOME TO JANULE .. BOT.. HI');
 
-const MemeScheme = new mongoose.Schema({
-    name: String,
-    creator: String,
-    edges: [String],
-});
-const Meme = mongoose.model('Meme', MemeScheme, 'memes');
-
 const PersonScheme = new mongoose.Schema({
     username: String,
 });
 const UserModel = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
 
 const models = {
-    Meme: Meme,
+    Janule: JanuleModel,
     Users: UserModel,
+    Memes: Meme,
 };
 
 const users = new Users(UserModel);
@@ -66,4 +61,4 @@ client.on('message', async (message: Discord.Message) => {
     handleCommand(command, args, username, message, models);
 });
 
-webServer(models);
+webServer();
