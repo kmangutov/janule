@@ -1,4 +1,4 @@
-import { Models } from './types';
+import Meme from './models/meme.model';
 
 // Format from http://bl.ocks.org/jose187/4733747
 // Given Memes, convert to graph format.
@@ -56,9 +56,7 @@ const memesToDag = async (memes) => {
     return obj;
 };
 
-export const webServer = async (models: Models) => {
-    const { Meme } = models;
-
+export const webServer = async () => {
     var path = require('path');
     const express = require('express');
     const app = express();
