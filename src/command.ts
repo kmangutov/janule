@@ -156,17 +156,17 @@ export const handleCommand = async (
             const randomSynthMeme = await MemeController.RollMeme();
             if (args.length > 0) {
                 let foundMemes = await MemeController.FindMemes(args.join(' '));
-                let randomIdx = Math.floor(foundMemes.length * Math.random());
-                console.log(foundMemes.length);
+                let randomIdx: number;
                 if (foundMemes.length == 0) {
                     foundMemes = [await MemeController.RollMeme()];
                     randomIdx = 0;
                 } else {
-                    if (foundMemes[randomIdx].edges.length > 0) {
-                        const edgeMemes = await MemeController.GetMemesByID(foundMemes[randomIdx].edges);
-                        foundMemes = foundMemes.concat(edgeMemes);
-                        randomIdx = Math.floor(foundMemes.length * Math.random());
-                    }
+                    const pendingMemeEdges = foundMemes.map(async (meme) => {
+                        return await MemeController.GetMemesByID(meme.edges);
+                    });
+                    const memeEdges2D = await Promise.all(pendingMemeEdges);
+                    foundMemes = foundMemes.concat(memeEdges2D.flat());
+                    randomIdx = Math.floor(foundMemes.length * Math.random());
                 }
                 message.channel.send(`Try this: ${foundMemes[randomIdx].name} ${randomSynthMeme.name}`);
             } else {
