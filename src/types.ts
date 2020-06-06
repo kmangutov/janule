@@ -10,13 +10,14 @@ export enum Command {
     Help,
     Roll,
     RollMeme,
+    Stats,
+    Synth,
     Thanks,
 }
 
 export type Args = (string | number)[];
 
 export type Models = {
-    Meme: mongoose.Model<mongoose.Document, {}>;
     Janule: mongoose.Model<mongoose.Document, {}>;
     Users: mongoose.Model<mongoose.Document, {}>;
 };

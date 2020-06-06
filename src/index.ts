@@ -9,6 +9,10 @@ import { dbUrl, dbToken } from '../secrets.json';
 
 import { Users } from './users';
 
+export const _STATS = {
+    startTime: new Date(),
+};
+
 const client = new Discord.Client();
 client.login(dbToken);
 
@@ -27,13 +31,6 @@ mongoose
 
 console.info('WELCOME TO JANULE .. BOT.. HI');
 
-const MemeScheme = new mongoose.Schema({
-    name: String,
-    creator: String,
-    edges: [String],
-});
-const Meme = mongoose.model('Meme', MemeScheme, 'memes');
-
 const PersonScheme = new mongoose.Schema({
     username: String,
 });
@@ -45,7 +42,6 @@ const JanuleStatsSchema = new mongoose.Schema({
 const JanuleModel = mongoose.model('JanuleStats', JanuleStatsSchema, 'janule_stats');
 
 const models = {
-    Meme: Meme,
     Janule: JanuleModel,
     Users: UserModel,
 };
@@ -72,4 +68,4 @@ client.on('message', async (message: Discord.Message) => {
     handleCommand(command, args, username, message, models);
 });
 
-webServer(models);
+webServer();
