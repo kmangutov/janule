@@ -3,7 +3,7 @@ import { IUser } from '../models/user.model';
 
 interface ICreateMemeInput {
     name: IMeme['name'];
-    creator: IUser['username'];
+    creator: IUser['name'];
     edges: IMeme['edges'];
 }
 

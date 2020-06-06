@@ -2,11 +2,11 @@ import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
-    username: string;
+    name: string;
 }
 
 const UserSchema: mongoose.Schema = new Schema({
-    username: { type: String, requried: true, unique: true },
+    name: { type: String, requried: true, unique: true },
 });
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<IUser>('JanuleUsers', UserSchema, 'janule_users');

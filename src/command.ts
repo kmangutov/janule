@@ -1,9 +1,11 @@
 import * as Discord from 'discord.js';
 
+import { Args, Command } from './types';
 import { _STATS } from './index';
-import { Args, Command, Models } from './types';
-import MemeController from './controllers/meme.controller';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
+import MemeController from './controllers/meme.controller';
+import JanuleStatsController from './controllers/januleStats.controller';
+import UserController from './controllers/user.controller';
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
@@ -18,17 +20,7 @@ const trimMessage = (prefix: string | null, body: string) => {
     }
 };
 
-export const handleCommand = async (
-    command: Command,
-    args: Args,
-    username: string,
-    message: Discord.Message,
-    models: Models,
-) => {
-    // TODO: Fully deprecate the paradigm of passing models through the 'models' parameter. Instead, move fully to the
-    // models/controllers paradigm.
-    const { Users, Janule } = models;
-
+export const handleCommand = async (command: Command, args: Args, username: string, message: Discord.Message) => {
     switch (command) {
         default:
             // If the message doesn't parse into a command, it is ignored.
@@ -117,13 +109,9 @@ export const handleCommand = async (
             message.channel.send(trimMessage('Current memes: \n', resultString));
             break;
         case Command.GetUsers:
-            Users.collection
-                .find()
-                .toArray()
-                .then(async (documents) => {
-                    const results = documents.map((value, index) => index + 1 + ': ' + value.name);
-                    message.channel.send('Current Users: \n' + results.join('\n'));
-                });
+            const users = await UserController.getUsers();
+            const userList = users.map((user, index) => `${index + 1}: ${user.name}`);
+            message.channel.send(`Current Users:\n ${userList.join('\n')}`);
             break;
         case Command.Help:
             const keys = Object.keys(COMMAND_STRING_PARSE_MAP);
@@ -167,24 +155,8 @@ export const handleCommand = async (
             }
             break;
         case Command.Thanks:
-            await Janule.collection
-                .find()
-                .toArray()
-                .then(async (documents) => {
-                    if (documents.length == 1) {
-                        const thanks = documents[0];
-                        const updatedThanks = await Janule.findOneAndUpdate(
-                            { thanksCount: thanks.thanksCount },
-                            { $set: { thanksCount: thanks.thanksCount + 1 } },
-                            { new: true },
-                        );
-                        message.channel.send(
-                            `I appreciate you! I've been thanked ${updatedThanks.toObject().thanksCount} times!`,
-                        );
-                    } else {
-                        message.channel.send('I appreciate you, but my thanks count is broken :(');
-                    }
-                });
+            const januleStats = await JanuleStatsController.ThankJanule();
+            message.channel.send(`I appreciate you! I've been thanked ${januleStats.thanksCount} times!`);
             break;
     }
 };

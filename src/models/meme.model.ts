@@ -4,7 +4,7 @@ import { IUser } from './user.model';
 
 export interface IMeme extends Document {
     name: string;
-    creator: IUser['username'];
+    creator: IUser['name'];
     edges: Array<string>;
 }
 

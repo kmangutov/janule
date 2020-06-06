@@ -7,8 +7,7 @@ import { webServer } from './server';
 
 import { dbUrl, dbToken } from '../secrets.json';
 
-import { Users } from './users';
-import Meme from './models/meme.model';
+import UserController from './controllers/user.controller';
 
 export const _STATS = {
     startTime: new Date(),
@@ -32,24 +31,6 @@ mongoose
 
 console.info('WELCOME TO JANULE .. BOT.. HI');
 
-const PersonScheme = new mongoose.Schema({
-    username: String,
-});
-const UserModel = mongoose.model('JanuleUsers', PersonScheme, 'janule_users');
-
-const JanuleStatsSchema = new mongoose.Schema({
-    thanksCount: Number,
-});
-const JanuleModel = mongoose.model('JanuleStats', JanuleStatsSchema, 'janule_stats');
-
-const models = {
-    Janule: JanuleModel,
-    Users: UserModel,
-    Memes: Meme,
-};
-
-const users = new Users(UserModel);
-
 client.on('message', async (message: Discord.Message) => {
     if (!isDbConnected) {
         return;
@@ -57,17 +38,17 @@ client.on('message', async (message: Discord.Message) => {
 
     const username = message.author.username + '#' + message.author.discriminator;
 
-    let uid = await users.getUIDForDiscordName(username);
+    let uid = await UserController.getUIDForDiscordName(username);
     if (uid == null) {
-        await users.addUser(username);
-        uid = await users.getUIDForDiscordName(username);
+        await UserController.CreateUser({ name: username });
+        uid = await UserController.getUIDForDiscordName(username);
     }
 
     console.info('Message received from %s, UID: %s.', username, uid);
 
     const { command, args } = parseCommand(message.content);
 
-    handleCommand(command, args, username, message, models);
+    handleCommand(command, args, username, message);
 });
 
 webServer();
