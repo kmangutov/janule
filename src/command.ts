@@ -7,6 +7,16 @@ import { COMMAND_STRING_PARSE_MAP } from './parse';
 const A_FLAG = '-a';
 const B_FLAG = '-b';
 
+const DISCORD_MAX_MESSAGE_LEN = 2000;
+
+const trimMessage = (prefix: string | null, body: string) => {
+    if (prefix === null) {
+        return body.slice(0, DISCORD_MAX_MESSAGE_LEN);
+    } else {
+        return prefix + body.slice(0, DISCORD_MAX_MESSAGE_LEN - prefix.length);
+    }
+};
+
 export const handleCommand = async (
     command: Command,
     args: Args,
@@ -80,10 +90,7 @@ export const handleCommand = async (
                         return completed;
                     });
                     let results = resultStringArray.join('\n');
-                    if (results.length > 1984) {
-                        results = results.slice(0, 1984);
-                    }
-                    message.channel.send('Results: \n' + results);
+                    message.channel.send(trimMessage('Results: \n', results));
                 } else {
                     message.channel.send('No memes found that match: ' + memeArg);
                 }
@@ -104,12 +111,7 @@ export const handleCommand = async (
                     return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
                 })
                 .join('\n');
-            // Discord has a message length cap of 2000 characters and 'Current memes: \n' is 16 characters.
-            // Not a reference to 1984
-            if (resultString.length > 1984) {
-                resultString = resultString.slice(0, 1984);
-            }
-            message.channel.send('Current memes: \n' + resultString);
+            message.channel.send(trimMessage('Current memes: \n', resultString));
             break;
         case Command.GetUsers:
             Users.collection
