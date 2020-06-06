@@ -1,11 +1,22 @@
 import * as Discord from 'discord.js';
 
+import { _STATS } from './index';
 import { Args, Command, Models } from './types';
 import MemeController from './controllers/meme.controller';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
+
+const DISCORD_MAX_MESSAGE_LEN = 2000;
+
+const trimMessage = (prefix: string | null, body: string) => {
+    if (prefix === null) {
+        return body.slice(0, DISCORD_MAX_MESSAGE_LEN);
+    } else {
+        return prefix + body.slice(0, DISCORD_MAX_MESSAGE_LEN - prefix.length);
+    }
+};
 
 export const handleCommand = async (
     command: Command,
@@ -14,6 +25,8 @@ export const handleCommand = async (
     message: Discord.Message,
     models: Models,
 ) => {
+    // TODO: Fully deprecate the paradigm of passing models through the 'models' parameter. Instead, move fully to the
+    // models/controllers paradigm.
     const { Users, Janule } = models;
 
     switch (command) {
@@ -80,10 +93,7 @@ export const handleCommand = async (
                         return completed;
                     });
                     let results = resultStringArray.join('\n');
-                    if (results.length > 1984) {
-                        results = results.slice(0, 1984);
-                    }
-                    message.channel.send('Results: \n' + results);
+                    message.channel.send(trimMessage('Results: \n', results));
                 } else {
                     message.channel.send('No memes found that match: ' + memeArg);
                 }
@@ -104,12 +114,7 @@ export const handleCommand = async (
                     return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
                 })
                 .join('\n');
-            // Discord has a message length cap of 2000 characters and 'Current memes: \n' is 16 characters.
-            // Not a reference to 1984
-            if (resultString.length > 1984) {
-                resultString = resultString.slice(0, 1984);
-            }
-            message.channel.send('Current memes: \n' + resultString);
+            message.channel.send(trimMessage('Current memes: \n', resultString));
             break;
         case Command.GetUsers:
             Users.collection
@@ -131,6 +136,35 @@ export const handleCommand = async (
         case Command.RollMeme:
             const randomMeme = await MemeController.RollMeme();
             message.channel.send(randomMeme.name);
+            break;
+        case Command.Stats:
+            message.channel.send(`Running since: ${_STATS.startTime}`);
+            break;
+        case Command.Synth:
+            const randomSynthMeme = await MemeController.RollMeme();
+            if (args.length > 0) {
+                let foundMemes = await MemeController.FindMemes(args.join(' '));
+                let randomIdx: number;
+                if (foundMemes.length == 0) {
+                    foundMemes = [await MemeController.RollMeme()];
+                    randomIdx = 0;
+                } else {
+                    const pendingMemeEdges = foundMemes.map(async (meme) => {
+                        return await MemeController.GetMemesByID(meme.edges);
+                    });
+                    const memeEdges2D = await Promise.all(pendingMemeEdges);
+                    foundMemes = foundMemes.concat(memeEdges2D.flat());
+                    randomIdx = Math.floor(foundMemes.length * Math.random());
+                }
+                message.channel.send(`Try this: ${foundMemes[randomIdx].name} ${randomSynthMeme.name}`);
+            } else {
+                const memeAName = randomSynthMeme.name;
+                const randomMemeB = await MemeController.RollMeme();
+                const memeBName = randomMemeB.name;
+                message.channel.send(
+                    `How about: ${memeAName.substr(0, memeAName.length / 2)}${memeBName.substr(memeBName.length / 2)}`,
+                );
+            }
             break;
         case Command.Thanks:
             await Janule.collection

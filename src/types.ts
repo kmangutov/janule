@@ -10,6 +10,8 @@ export enum Command {
     Help,
     Roll,
     RollMeme,
+    Stats,
+    Synth,
     Thanks,
 }
 
