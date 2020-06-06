@@ -25,6 +25,8 @@ export const handleCommand = async (
     message: Discord.Message,
     models: Models,
 ) => {
+    // TODO: Fully deprecate the paradigm of passing models through the 'models' parameter. Instead, move fully to the
+    // models/controllers paradigm.
     const { Users, Janule } = models;
 
     switch (command) {
