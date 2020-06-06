@@ -10,8 +10,9 @@ export enum Command {
     Help,
     Roll,
     RollMeme,
-    Thanks,
+    Stats,
     Synth,
+    Thanks,
 }
 
 export type Args = (string | number)[];

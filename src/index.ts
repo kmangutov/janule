@@ -9,6 +9,10 @@ import { dbUrl, dbToken } from '../secrets.json';
 
 import { Users } from './users';
 
+export const _STATS = {
+    startTime: new Date(),
+};
+
 const client = new Discord.Client();
 client.login(dbToken);
 

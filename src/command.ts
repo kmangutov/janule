@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 
+import { _STATS } from './index';
 import { Args, Command, Models } from './types';
 import MemeController from './controllers/meme.controller';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
@@ -134,25 +135,8 @@ export const handleCommand = async (
             const randomMeme = await MemeController.RollMeme();
             message.channel.send(randomMeme.name);
             break;
-        case Command.Thanks:
-            await Janule.collection
-                .find()
-                .toArray()
-                .then(async (documents) => {
-                    if (documents.length == 1) {
-                        const thanks = documents[0];
-                        const updatedThanks = await Janule.findOneAndUpdate(
-                            { thanksCount: thanks.thanksCount },
-                            { $set: { thanksCount: thanks.thanksCount + 1 } },
-                            { new: true },
-                        );
-                        message.channel.send(
-                            `I appreciate you! I've been thanked ${updatedThanks.toObject().thanksCount} times!`,
-                        );
-                    } else {
-                        message.channel.send('I appreciate you, but my thanks count is broken :(');
-                    }
-                });
+        case Command.Stats:
+            message.channel.send(`Running since: ${_STATS.startTime}`);
             break;
         case Command.Synth:
             const randomSynthMeme = await MemeController.RollMeme();
@@ -179,6 +163,26 @@ export const handleCommand = async (
                     `How about: ${memeAName.substr(0, memeAName.length / 2)}${memeBName.substr(memeBName.length / 2)}`,
                 );
             }
+            break;
+        case Command.Thanks:
+            await Janule.collection
+                .find()
+                .toArray()
+                .then(async (documents) => {
+                    if (documents.length == 1) {
+                        const thanks = documents[0];
+                        const updatedThanks = await Janule.findOneAndUpdate(
+                            { thanksCount: thanks.thanksCount },
+                            { $set: { thanksCount: thanks.thanksCount + 1 } },
+                            { new: true },
+                        );
+                        message.channel.send(
+                            `I appreciate you! I've been thanked ${updatedThanks.toObject().thanksCount} times!`,
+                        );
+                    } else {
+                        message.channel.send('I appreciate you, but my thanks count is broken :(');
+                    }
+                });
             break;
     }
 };

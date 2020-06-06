@@ -13,7 +13,9 @@ export const COMMAND_STRING_PARSE_MAP = {
     help: Command.Help,
     roll: Command.Roll,
     rollmeme: Command.RollMeme,
+    thx: Command.Thanks,
     thanks: Command.Thanks,
+    stats: Command.Stats,
     synth: Command.Synth,
 };
 
