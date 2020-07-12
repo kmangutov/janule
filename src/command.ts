@@ -3,12 +3,17 @@ import * as Discord from 'discord.js';
 import { _STATS } from './index';
 import { Args, Command, Models } from './types';
 import MemeController from './controllers/meme.controller';
+import StrainController from './controllers/strains.controller';
+import { CANNABIS_SPECIES_PARSE_MAP } from './models/strains.model';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
+const DASH_DELIMETER = '-';
 
 const DISCORD_MAX_MESSAGE_LEN = 2000;
+
+const JOINT = `</////> ~~~~\n`;
 
 const trimMessage = (prefix: string | null, body: string) => {
     if (prefix === null) {
@@ -58,7 +63,26 @@ export const handleCommand = async (
                     message.channel.send(`Meme ${memeASeachParam} or ${memeBSearchParam} not found`);
                 }
             } else {
-                message.channel.send('Usage: !addedge -a memeA -b multi word memeB');
+                message.channel.send('Usage: !j addedge -a memeA -b multi word memeB');
+            }
+            break;
+        case Command.AddStrain:
+            const addStrainDelimeterIdx = args.findIndex((arg) => arg == DASH_DELIMETER);
+            if (args.length > 0 && addStrainDelimeterIdx != -1 && addStrainDelimeterIdx != 0) {
+                const strain = args.slice(0, addStrainDelimeterIdx).join(' ');
+                const species = args
+                    .slice(addStrainDelimeterIdx + 1)
+                    .join(' ')
+                    .toLocaleLowerCase();
+                if (species in CANNABIS_SPECIES_PARSE_MAP) {
+                    const speciesType = CANNABIS_SPECIES_PARSE_MAP[species];
+                    const strainObj = await StrainController.AddStrain(strain, speciesType);
+                    message.channel.send(`Added strain: ${strainObj.strain} - ${strainObj.species}`);
+                } else {
+                    message.channel.send(`Species ${species} not recognized. Ex. species: h, Hybrid, sativa`);
+                }
+            } else {
+                message.channel.send(`Usage: !j addstrain Hindu Krosh - hybrid`);
             }
             break;
         case Command.DeleteMeme:
@@ -66,6 +90,42 @@ export const handleCommand = async (
                 const memeToDelete = args.join(' ');
                 await MemeController.DeleteMeme(memeToDelete);
                 message.channel.send(`Deleted meme: ${memeToDelete}`);
+            }
+            break;
+        case Command.DeleteStrain:
+            const deleteStrainDelimeterIdx = args.findIndex((arg) => arg == DASH_DELIMETER);
+            if (args.length > 0 && deleteStrainDelimeterIdx != -1 && deleteStrainDelimeterIdx != 0) {
+                const strain = args.slice(0, deleteStrainDelimeterIdx).join(' ');
+                const species = args
+                    .slice(deleteStrainDelimeterIdx + 1)
+                    .join(' ')
+                    .toLocaleLowerCase();
+                if (species in CANNABIS_SPECIES_PARSE_MAP) {
+                    const speciesType = CANNABIS_SPECIES_PARSE_MAP[species];
+                    try {
+                        await StrainController.DeleteStrain(strain, speciesType);
+                        message.channel.send(`Deleted ${strain} - ${species}`);
+                    } catch (error) {
+                        message.channel.send(`Error deleting ${strain} - ${species}: ${error}`);
+                    }
+                } else {
+                    message.channel.send(`Species ${species} not recognized. Ex. species: h, Hybrid, sativa`);
+                }
+            } else {
+                message.channel.send(`Usage !j deletestrain WoobSex - indica`);
+            }
+            break;
+        case Command.FindStrain:
+            if (args.length > 0) {
+                const strain = args.join(' ');
+                const strainObj = await StrainController.GetStrain(strain);
+                if (strainObj != null) {
+                    message.channel.send(`${strainObj.strain} - ${strainObj.species}`);
+                } else {
+                    message.channel.send(`Couldn't find a strain that matched: ${strain}.`);
+                }
+            } else {
+                message.channel.send(`Usage !j findstrain Dank Mangutov`);
             }
             break;
         case Command.GetMeme:
@@ -136,6 +196,11 @@ export const handleCommand = async (
         case Command.RollMeme:
             const randomMeme = await MemeController.RollMeme();
             message.channel.send(randomMeme.name);
+            break;
+        case Command.RollJoint:
+            const grams = Math.round(Math.random() * 50) / 10;
+            const strain = await StrainController.RollStrain();
+            message.channel.send(`${JOINT}Yo, here's a ${grams}g ${strain.strain} joint puff puff pass`);
             break;
         case Command.Stats:
             message.channel.send(`Running since: ${_STATS.startTime}`);
