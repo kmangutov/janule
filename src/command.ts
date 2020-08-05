@@ -6,6 +6,7 @@ import { COMMAND_STRING_PARSE_MAP } from './parse';
 import MemeController from './controllers/meme.controller';
 import JanuleStatsController from './controllers/januleStats.controller';
 import UserController from './controllers/user.controller';
+import { renderToFile } from './render';
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
@@ -23,6 +24,7 @@ const trimMessage = (prefix: string | null, body: string) => {
 export const handleCommand = async (command: Command, args: Args, username: string, message: Discord.Message) => {
     switch (command) {
         default:
+            console.log('handleCommand :: ' + command)
             // If the message doesn't parse into a command, it is ignored.
             return;
         case Command.AddMeme:
@@ -157,6 +159,18 @@ export const handleCommand = async (command: Command, args: Args, username: stri
         case Command.Thanks:
             const januleStats = await JanuleStatsController.ThankJanule();
             message.channel.send(`I appreciate you! I've been thanked ${januleStats.thanksCount} times!`);
+            break;
+        case Command.Graph:
+            console.log('COMMAND GRAPH!!!')
+            let renderPromise = renderToFile()
+            renderPromise.then((_path: string) =>  {
+                message.channel.send('', {
+                    files: [
+                        _path
+                    ]
+                })
+            })
+           
             break;
     }
 };

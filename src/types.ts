@@ -13,6 +13,7 @@ export enum Command {
     Stats,
     Synth,
     Thanks,
+    Graph,
 }
 
 export type Args = (string | number)[];
