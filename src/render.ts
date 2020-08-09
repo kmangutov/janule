@@ -90,23 +90,20 @@ function tempFile (name = 'temp_file', data = '', encoding = 'utf8') {
 }
 
 
-function paint(canvas) {
+function paint(canvas, root="") {
     return Meme.collection
     .find()
     .toArray()
     .then(async (documents) => {
-        const obj = await memesToDag(documents);
+        // Source: https://bl.ocks.org/jodyphelan/5dc989637045a0f48418101423378fbd 
 
-
-        // TODO : https://bl.ocks.org/jodyphelan/5dc989637045a0f48418101423378fbd 
-
-
-        const d3 = d3n.d3;
-
-        const context = canvas.getContext('2d')
-        
         const WIDTH = 800
         const HEIGHT = 600
+        
+        const obj = await memesToDag(documents);
+
+        const d3 = d3n.d3;
+        const context = canvas.getContext('2d')
         var simulation = d3.forceSimulation()
             .force("center", d3.forceCenter(WIDTH / 2, HEIGHT / 2))
             .force("x", d3.forceX(WIDTH / 2).strength(0.1))
@@ -153,6 +150,9 @@ function paint(canvas) {
         for (var i = 0; i < 20; i++) {
             simulation.tick();
         }
+
+        // TODO: Race condition here, sometimes graph is written to file 
+        // before simulation is ran???
         return Promise.resolve()
     })
 }
