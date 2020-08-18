@@ -1,8 +1,6 @@
 // This module is for rendering a png image of the meme graph
 // which can be sent to discord or rendered online
 
-
-//const d3 = require('d3')
 const D3Node = require('d3-node')
 const fs = require('fs');
 const canvasModule = require('canvas'); // supports node-canvas v1 & v2.x
@@ -167,7 +165,7 @@ export const renderToFile = async () => {
     await paintPromise
 
     return tempFile('temp-image.png').then(async path => {
-        // draw on your canvas, then output canvas to png
+        // Draw on your canvas, then output canvas to png
 
         canvas.pngStream().pipe(fs.createWriteStream(path));
         console.log('wrote ' + path)
