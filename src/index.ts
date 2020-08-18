@@ -3,7 +3,6 @@ import * as mongoose from 'mongoose';
 
 import { handleCommand } from './command';
 import { parseCommand } from './parse';
-import { webServer } from './server';
 
 import { dbUrl, dbToken } from '../secrets.json';
 
@@ -50,5 +49,3 @@ client.on('message', async (message: Discord.Message) => {
 
     handleCommand(command, args, username, message);
 });
-
-webServer();
