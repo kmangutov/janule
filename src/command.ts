@@ -24,7 +24,6 @@ const trimMessage = (prefix: string | null, body: string) => {
 export const handleCommand = async (command: Command, args: Args, username: string, message: Discord.Message) => {
     switch (command) {
         default:
-            console.log('handleCommand :: ' + command)
             // If the message doesn't parse into a command, it is ignored.
             return;
         case Command.AddMeme:
