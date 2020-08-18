@@ -1,3 +1,6 @@
+// This module is for rendering a png image of the meme graph
+// which can be sent to discord or rendered online
+
 
 //const d3 = require('d3')
 const D3Node = require('d3-node')
