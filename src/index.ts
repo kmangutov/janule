@@ -7,6 +7,8 @@ import { parseCommand } from './parse';
 import { dbUrl, dbToken } from '../secrets.json';
 
 import UserController from './controllers/user.controller';
+import { Emojis, EMOJI_IDENTIFIER_MAP } from './types';
+import memeController from './controllers/meme.controller';
 
 export const _STATS = {
     startTime: new Date(),
@@ -29,6 +31,29 @@ mongoose
     });
 
 console.info('WELCOME TO JANULE .. BOT.. HI');
+console.info(client.user);
+client.on('messageReactionAdd', async (reaction: Discord.MessageReaction, user: Discord.User) => {
+    const reactionUser = user.username + '#' + user.discriminator;
+    const botUser = client.user.username + '#' + user.discriminator;
+    const identifier = reaction.emoji.identifier;
+    const messageContent = reaction.message.content;
+    if (reactionUser !== botUser && identifier in EMOJI_IDENTIFIER_MAP) {
+        switch (EMOJI_IDENTIFIER_MAP[identifier]) {
+            case Emojis.Approve:
+                console.info(`${reactionUser} approves of ${messageContent}`);
+                const meme = await memeController.CreateMeme({
+                    name: messageContent,
+                    creator: reactionUser,
+                    edges: [],
+                });
+                reaction.message.channel.send(`Successfully added meme: "${meme.name}"`);
+                break;
+            case Emojis.Reject:
+                console.info(`${reactionUser} rejects of ${messageContent}`);
+                break;
+        }
+    }
+});
 
 client.on('message', async (message: Discord.Message) => {
     if (!isDbConnected) {

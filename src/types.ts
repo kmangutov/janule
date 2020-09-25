@@ -16,6 +16,16 @@ export enum Command {
     Graph,
 }
 
+export enum Emojis {
+    Approve,
+    Reject,
+}
+
+export const EMOJI_IDENTIFIER_MAP = {
+    '%E2%9C%85': Emojis.Approve,
+    '%E2%9D%8C': Emojis.Reject,
+};
+
 export type Args = (string | number)[];
 
 export type Models = {

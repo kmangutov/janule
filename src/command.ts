@@ -1,9 +1,10 @@
 import * as Discord from 'discord.js';
-
 import { Args, Command } from './types';
 import { _STATS } from './index';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
 import MemeController from './controllers/meme.controller';
+import Message from './message';
+import Synth from './synth';
 import JanuleStatsController from './controllers/januleStats.controller';
 import UserController from './controllers/user.controller';
 import { renderToFile } from './render';
@@ -130,45 +131,30 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             message.channel.send(`Running since: ${_STATS.startTime}`);
             break;
         case Command.Synth:
-            const randomSynthMeme = await MemeController.RollMeme();
+            let synthesis: string;
             if (args.length > 0) {
-                let foundMemes = await MemeController.FindMemes(args.join(' '));
-                let randomIdx: number;
-                if (foundMemes.length == 0) {
-                    foundMemes = [await MemeController.RollMeme()];
-                    randomIdx = 0;
-                } else {
-                    const pendingMemeEdges = foundMemes.map(async (meme) => {
-                        return await MemeController.GetMemesByID(meme.edges);
-                    });
-                    const memeEdges2D = await Promise.all(pendingMemeEdges);
-                    foundMemes = foundMemes.concat(memeEdges2D.flat());
-                    randomIdx = Math.floor(foundMemes.length * Math.random());
-                }
-                message.channel.send(`Try this: ${foundMemes[randomIdx].name} ${randomSynthMeme.name}`);
+                synthesis = await Synth.synthWithArg(args.join(' '));
             } else {
-                const memeAName = randomSynthMeme.name;
-                const randomMemeB = await MemeController.RollMeme();
-                const memeBName = randomMemeB.name;
-                message.channel.send(
-                    `How about: ${memeAName.substr(0, memeAName.length / 2)}${memeBName.substr(memeBName.length / 2)}`,
-                );
+                synthesis = await Synth.synth();
             }
+            const flip = Math.floor(Math.random() * 2);
+            const preface = flip == 1 ? 'How about: ' : 'Try this: ';
+            message.channel.send(preface);
+            const synthesisMessage = await message.channel.send(synthesis);
+            Message.reactApproveRejectEmojis(synthesisMessage);
             break;
         case Command.Thanks:
             const januleStats = await JanuleStatsController.ThankJanule();
             message.channel.send(`I appreciate you! I've been thanked ${januleStats.thanksCount} times!`);
             break;
         case Command.Graph:
-            let renderPromise = renderToFile()
-            renderPromise.then((_path: string) =>  {
+            let renderPromise = renderToFile();
+            renderPromise.then((_path: string) => {
                 message.channel.send('', {
-                    files: [
-                        _path
-                    ]
-                })
-            })
-           
+                    files: [_path],
+                });
+            });
+
             break;
     }
 };
