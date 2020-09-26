@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 
 import { handleCommand } from './command';
 import { parseCommand } from './parse';
+import Reactions from './reactions';
 
 import { dbUrl, dbToken } from '../secrets.json';
 
@@ -29,6 +30,10 @@ mongoose
     });
 
 console.info('WELCOME TO JANULE .. BOT.. HI');
+
+client.on('messageReactionAdd', async (reaction: Discord.MessageReaction, user: Discord.User) => {
+    Reactions.handleReaction(reaction, user, client);
+});
 
 client.on('message', async (message: Discord.Message) => {
     if (!isDbConnected) {

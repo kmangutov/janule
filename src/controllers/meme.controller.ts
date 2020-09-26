@@ -27,6 +27,15 @@ async function CreateMeme(meme: ICreateMemeInput): Promise<IMeme> {
         });
 }
 
+async function FindMeme(search: string): Promise<IMeme | null> {
+    const maybeMeme = await Meme.find({ name: search });
+    if (maybeMeme.length > 0) {
+        return maybeMeme[0];
+    } else {
+        return null;
+    }
+}
+
 async function FindMemes(search: string): Promise<Array<IMeme>> {
     const regex = new RegExp(search);
     return await Meme.find({ $or: [{ name: regex }, { creator: regex }] }).limit(30);
@@ -83,6 +92,7 @@ async function RollMeme(): Promise<IMeme> {
 export default {
     AddEdge,
     CreateMeme,
+    FindMeme,
     FindMemes,
     DeleteMeme,
     GetMemes,

@@ -1,13 +1,12 @@
 // This module is for rendering a png image of the meme graph
 // which can be sent to discord or rendered online
 
-const D3Node = require('d3-node')
+const D3Node = require('d3-node');
 const fs = require('fs');
 const canvasModule = require('canvas'); // supports node-canvas v1 & v2.x
 
-const options = {  canvasModule: canvasModule }
+const options = { canvasModule: canvasModule };
 const d3n = new D3Node(options); // pass it node-canvas
-
 
 import Meme from './models/meme.model';
 
@@ -31,7 +30,11 @@ const memesToDag = async (memes) => {
             meme.display = true;
             meme.edges.map((edge) => {
                 const targetMeme = parsedMemes.find((item) => item.uid == edge);
-                targetMeme.display = true;
+                if (targetMeme === undefined) {
+                    console.log(edge);
+                } else {
+                    targetMeme.display = true;
+                }
             });
         }
     });
@@ -67,108 +70,110 @@ const memesToDag = async (memes) => {
     return obj;
 };
 
-
-function tempFile (name = 'temp_file', data = '', encoding = 'utf8') {
+function tempFile(name = 'temp_file', data = '', encoding = 'utf8') {
     const os = require('os');
     const path = require('path');
 
     return new Promise((resolve, reject) => {
         const tempPath = path.join(os.tmpdir(), 'janule-');
         fs.mkdtemp(tempPath, (err, folder) => {
-            if (err) 
-                return reject(err)
+            if (err) return reject(err);
 
             const file_name = path.join(folder, name);
 
-            fs.writeFile(file_name, data, encoding, error_file => {
-                if (error_file) 
-                    return reject(error_file);
+            fs.writeFile(file_name, data, encoding, (error_file) => {
+                if (error_file) return reject(error_file);
 
-                resolve(file_name)
-            })
-        })
-    })
+                resolve(file_name);
+            });
+        });
+    });
 }
 
-
-function paint(canvas, root="") {
+function paint(canvas, root = '') {
     return Meme.collection
-    .find()
-    .toArray()
-    .then(async (documents) => {
-        // Source: https://bl.ocks.org/jodyphelan/5dc989637045a0f48418101423378fbd 
+        .find()
+        .toArray()
+        .then(async (documents) => {
+            // Source: https://bl.ocks.org/jodyphelan/5dc989637045a0f48418101423378fbd
 
-        const WIDTH = 800
-        const HEIGHT = 600
-        
-        const obj = await memesToDag(documents);
+            const WIDTH = 800;
+            const HEIGHT = 600;
 
-        const d3 = d3n.d3;
-        const context = canvas.getContext('2d')
-        var simulation = d3.forceSimulation()
-            .force("center", d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-            .force("x", d3.forceX(WIDTH / 2).strength(0.1))
-            .force("y", d3.forceY(HEIGHT / 2).strength(0.1))
-            .force("charge", d3.forceManyBody().strength(-50))
-            .force("link", d3.forceLink().strength(1).id(function(d) { return d.group; }))
-            .alphaTarget(0)
-            .alphaDecay(0.05)
-            
-        function tick() {
-            const COLOR_GRAY = '#E1E5E5'
-            context.save();
-            console.log('######## TICK')
+            const obj = await memesToDag(documents);
 
-            context.clearRect(0, 0, WIDTH, HEIGHT);
+            const d3 = d3n.d3;
+            const context = canvas.getContext('2d');
+            var simulation = d3
+                .forceSimulation()
+                .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
+                .force('x', d3.forceX(WIDTH / 2).strength(0.1))
+                .force('y', d3.forceY(HEIGHT / 2).strength(0.1))
+                .force('charge', d3.forceManyBody().strength(-50))
+                .force(
+                    'link',
+                    d3
+                        .forceLink()
+                        .strength(1)
+                        .id(function (d) {
+                            return d.group;
+                        }),
+                )
+                .alphaTarget(0)
+                .alphaDecay(0.05);
 
-            obj.links.forEach(function(d) {
-                context.beginPath();
-                context.moveTo(d.source.x, d.source.y);
-                context.lineTo(d.target.x, d.target.y);
-                context.strokeStyle = COLOR_GRAY
-                context.stroke();
-            });
+            function tick() {
+                const COLOR_GRAY = '#E1E5E5';
+                context.save();
+                console.log('######## TICK');
 
-            // Draw the nodes
-            const radius = 2
-            obj.nodes.forEach(function(d, i) {
-                context.beginPath();
-                context.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
-                context.fillStyle = COLOR_GRAY
-                context.fill();
+                context.clearRect(0, 0, WIDTH, HEIGHT);
 
-                context.fillText(d.name, d.x + 2, d.y + 2)
-            });
+                obj.links.forEach(function (d) {
+                    context.beginPath();
+                    context.moveTo(d.source.x, d.source.y);
+                    context.lineTo(d.target.x, d.target.y);
+                    context.strokeStyle = COLOR_GRAY;
+                    context.stroke();
+                });
 
-            context.restore();
-        }
+                // Draw the nodes
+                const radius = 2;
+                obj.nodes.forEach(function (d, i) {
+                    context.beginPath();
+                    context.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
+                    context.fillStyle = COLOR_GRAY;
+                    context.fill();
 
-        simulation.nodes(obj.nodes)
-            .on("tick", tick);
-        simulation.force("link")
-            .links(obj.links);
+                    context.fillText(d.name, d.x + 2, d.y + 2);
+                });
 
-        for (var i = 0; i < 20; i++) {
-            simulation.tick();
-        }
+                context.restore();
+            }
 
-        // TODO: Race condition here, sometimes graph is written to file 
-        // before simulation is ran???
-        return Promise.resolve()
-    })
+            simulation.nodes(obj.nodes).on('tick', tick);
+            simulation.force('link').links(obj.links);
+
+            for (var i = 0; i < 20; i++) {
+                simulation.tick();
+            }
+
+            // TODO: Race condition here, sometimes graph is written to file
+            // before simulation is ran???
+            return Promise.resolve();
+        });
 }
-
 
 export const renderToFile = async () => {
     const canvas = d3n.createCanvas(960, 500);
-    let paintPromise = paint(canvas)
-    await paintPromise
+    let paintPromise = paint(canvas);
+    await paintPromise;
 
-    return tempFile('temp-image.png').then(async path => {
+    return tempFile('temp-image.png').then(async (path) => {
         // Draw on your canvas, then output canvas to png
 
         canvas.pngStream().pipe(fs.createWriteStream(path));
-        console.log('wrote ' + path)
-        return path
-    })
-}
+        console.log('wrote ' + path);
+        return path;
+    });
+};
