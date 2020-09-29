@@ -8,6 +8,7 @@ import Synth from './synth';
 import JanuleStatsController from './controllers/januleStats.controller';
 import UserController from './controllers/user.controller';
 import { renderToFile } from './render';
+import fetch from 'node-fetch';
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
@@ -55,6 +56,24 @@ export const handleCommand = async (command: Command, args: Args, username: stri
                 message.channel.send('Usage: !addedge -a memeA -b multi word memeB');
             }
             break;
+        case Command.Covid:
+            // https://covidtracking.com/
+            fetch('https://api.covidtracking.com/v1/us/current.json')
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    const { death, deathIncrease } = data[0];
+                    const deathWithCommas = death.toLocaleString();
+                    const deathIncreaseWithCommas = deathIncrease.toLocaleString();
+                    message.channel.send(
+                        `${deathWithCommas} total COVID deaths in the US of A (${deathIncreaseWithCommas} new today)`,
+                    );
+                })
+                .catch(() => {
+                    message.channel.send('An error happened. Fuck you.');
+                });
+            return;
         case Command.DeleteMeme:
             if (args.length > 0) {
                 const memeToDelete = args.join(' ');
