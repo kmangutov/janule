@@ -6,6 +6,7 @@ const SHORT_JANULE = '!j';
 export const COMMAND_STRING_PARSE_MAP = {
     addmeme: Command.AddMeme,
     addedge: Command.AddEdge,
+    covid: Command.Covid,
     deletememe: Command.DeleteMeme,
     getmeme: Command.GetMeme,
     getmemes: Command.GetMemes,
