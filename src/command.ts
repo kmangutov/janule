@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js';
-import { Args, Command } from './types';
+import { Args, Command, JANULE_SYNTHESIS } from './types';
 import { _STATS } from './index';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
 import MemeController from './controllers/meme.controller';
@@ -139,8 +139,11 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             }
             const flip = Math.floor(Math.random() * 2);
             const preface = flip == 1 ? 'How about: ' : 'Try this: ';
-            message.channel.send(preface);
-            const synthesisMessage = await message.channel.send(synthesis);
+            const synthMessageEmbed = new Discord.MessageEmbed().setColor('#0099ff').setTitle(preface).addFields({
+                name: synthesis,
+                value: JANULE_SYNTHESIS,
+            });
+            const synthesisMessage = await message.channel.send(synthMessageEmbed);
             Message.reactApproveRejectEmojis(synthesisMessage);
             break;
         case Command.Thanks:

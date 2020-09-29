@@ -49,7 +49,6 @@ client.on('message', async (message: Discord.Message) => {
     }
 
     console.info('Message received from %s, UID: %s.', username, uid);
-
     const { command, args } = parseCommand(message.content);
 
     handleCommand(command, args, username, message);

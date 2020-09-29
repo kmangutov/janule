@@ -26,6 +26,8 @@ export const EMOJI_IDENTIFIER_MAP = {
     '%E2%9D%8C': Emojis.Reject,
 };
 
+export const JANULE_SYNTHESIS = 'janule-synthesis';
+
 export type Args = (string | number)[];
 
 export type Models = {
