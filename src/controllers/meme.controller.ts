@@ -70,14 +70,26 @@ async function GetMemesByID(ids: Array<IMeme['_id']>): Promise<IMeme[]> {
     });
 }
 
-async function DeleteMeme(meme: IMeme['name']): Promise<void> {
-    await Meme.deleteOne({ name: meme })
+async function DeleteMemeByID(id: IMeme['_id']): Promise<number> {
+    const deleteStatus = await Meme.deleteOne({ _id: id })
         .then((data) => {
-            return data;
+            return data.ok !== null ? data.ok : -1;
         })
         .catch((error: Error) => {
             throw error;
         });
+    return deleteStatus;
+}
+
+async function DeleteMemeByName(meme: IMeme['name']): Promise<number> {
+    const deleteStatus = await Meme.deleteOne({ name: meme })
+        .then((data) => {
+            return data.ok !== null ? data.ok : -1;
+        })
+        .catch((error: Error) => {
+            throw error;
+        });
+    return deleteStatus;
 }
 
 async function RollMeme(): Promise<IMeme> {
@@ -94,7 +106,8 @@ export default {
     CreateMeme,
     FindMeme,
     FindMemes,
-    DeleteMeme,
+    DeleteMemeByName,
+    DeleteMemeByID,
     GetMemes,
     GetMemesByID,
     RollMeme,
