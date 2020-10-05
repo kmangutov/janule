@@ -101,8 +101,17 @@ export const handleCommand = async (command: Command, args: Args, username: stri
         case Command.DeleteMeme:
             if (args.length > 0) {
                 const memeToDelete = args.join(' ');
-                await MemeController.DeleteMeme(memeToDelete);
-                message.channel.send(`Deleted meme: ${memeToDelete}`);
+                let deletionResponse = await MemeController.DeleteMemeByName(memeToDelete);
+                if (deletionResponse > 0) {
+                    message.channel.send(`Deleted meme: ${memeToDelete}`);
+                } else {
+                    deletionResponse = await MemeController.DeleteMemeByID(memeToDelete);
+                    if (deletionResponse > 0) {
+                        message.channel.send(`Deleted meme: ${memeToDelete}`);
+                    }
+                }
+            } else {
+                message.channel.send(`Please supply a meme's name or ID to delete it.`);
             }
             break;
         case Command.DeleteStrain:

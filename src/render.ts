@@ -8,11 +8,11 @@ const canvasModule = require('canvas'); // supports node-canvas v1 & v2.x
 const options = { canvasModule: canvasModule };
 const d3n = new D3Node(options); // pass it node-canvas
 
-import Meme from './models/meme.model';
+import Meme, { IMeme } from './models/meme.model';
 
 // Format from http://bl.ocks.org/jose187/4733747
 // Given Memes, convert to graph format.
-const memesToDag = async (memes) => {
+const memesToDag = async (memes: IMeme[]) => {
     var memeIDToInt = {};
     var counter = 0;
 
@@ -20,7 +20,7 @@ const memesToDag = async (memes) => {
         return {
             name: meme.name,
             uid: meme._id,
-            edges: meme.edges as Array<string>,
+            edges: meme.edges,
             display: false,
         };
     });
