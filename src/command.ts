@@ -11,6 +11,7 @@ import { Args, Command /*, BORGEYES_SYNTHESIS*/ } from './types';
 // import UserController from './controllers/user.controller';
 // import { renderToFile } from './render';
 // import fetch from 'node-fetch';
+import Jimp from 'jimp';
 
 // const A_FLAG = '-a';
 // const B_FLAG = '-b';
@@ -34,7 +35,16 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             // If the message doesn't parse into a command, it is ignored.
             return;
         case Command.Process:
-            message.channel.send(`[BORGEYES] Borgeyes processing...`);
+            await message.channel.send(`[BORGEYES] Borgeyes processing...`);
+
+            const image = await Jimp.read('https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png');
+
+            // Only handle PNGs for now
+            image.write('borgeyes.png')
+            await message.channel.send('test', { files: ["borgeyes.png"] })
+
+            await message.channel.send(`[BORGEYES] Borgeyes done processing.`);
+
             break;
         // case Command.AddMeme:
         //     const memeString = args.join(' ');

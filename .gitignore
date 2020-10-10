@@ -6,3 +6,6 @@ build/
 
 # Contains secrets! Warning!
 secrets.json
+
+# Borgeyes temp image file
+borgeyes.png
