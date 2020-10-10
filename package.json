@@ -2,8 +2,8 @@
   "name": "janule",
   "main": "build/src/index.js",
   "version": "0.0.0",
-  "description": ". . . J A N U L E . B O T . . .",
-  "author": "Team Janule <no.email.yet>",
+  "description": ". . . B O R G E Y E S . B O T . . .",
+  "author": "Team Borgeyes <no.email.yet>",
   "engines": {
     "node": "14.3.0"
   },
