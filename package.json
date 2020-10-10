@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@tensorflow-models/blazeface": "0.0.5",
+    "@tensorflow/tfjs": "^2.6.0",
+    "@tensorflow/tfjs-backend-wasm": "^2.6.0",
     "@tensorflow/tfjs-converter": "^2.6.0",
     "@tensorflow/tfjs-core": "^2.6.0",
     "canvas": "^2.6.1",

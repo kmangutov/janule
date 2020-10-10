@@ -12,6 +12,9 @@ import { Args, Command /*, BORGEYES_SYNTHESIS*/ } from './types';
 // import { renderToFile } from './render';
 // import fetch from 'node-fetch';
 import Jimp from 'jimp';
+import * as blazeface from "@tensorflow-models/blazeface";
+import * as tf from '@tensorflow/tfjs';
+import '@tensorflow/tfjs-backend-wasm';
 
 // const A_FLAG = '-a';
 // const B_FLAG = '-b';
@@ -40,8 +43,26 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             const image = await Jimp.read('https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png');
 
             // Only handle PNGs for now
-            image.write('borgeyes.png')
-            await message.channel.send('test', { files: ["borgeyes.png"] })
+            // image.write('borgeyes.png')
+            // await message.channel.send('test', { files: ["borgeyes.png"] })
+
+            // Initialize tensoflow
+            await tf.ready();
+
+            // Initiaize the model
+            const model = await blazeface.load();
+
+            image.getBuffer(Jimp.MIME_PNG, async (err, buffer) => {
+
+
+                // Stuck on getting image data into estimateFaces()
+                const predictions = await model.estimateFaces();
+
+                console.log(buffer, model);
+              });
+
+
+            // const predictions = await model.estimateFaces("borgeyes.png");
 
             await message.channel.send(`[BORGEYES] Borgeyes done processing.`);
 
