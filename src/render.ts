@@ -75,7 +75,7 @@ function tempFile(name = 'temp_file', data = '', encoding = 'utf8') {
     const path = require('path');
 
     return new Promise((resolve, reject) => {
-        const tempPath = path.join(os.tmpdir(), 'janule-');
+        const tempPath = path.join(os.tmpdir(), 'borgeyes-');
         fs.mkdtemp(tempPath, (err, folder) => {
             if (err) return reject(err);
 

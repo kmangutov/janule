@@ -19,6 +19,7 @@ export enum Command {
     Synth,
     Thanks,
     Graph,
+    Process,
 }
 
 export enum Emojis {
@@ -31,11 +32,11 @@ export const EMOJI_IDENTIFIER_MAP = {
     '%E2%9D%8C': Emojis.Reject,
 };
 
-export const JANULE_SYNTHESIS = 'janule-synthesis';
+export const BORGEYES_SYNTHESIS = 'borgeyes-synthesis';
 
 export type Args = (string | number)[];
 
 export type Models = {
-    Janule: mongoose.Model<mongoose.Document, {}>;
+    Borgeyes: mongoose.Model<mongoose.Document, {}>;
     Users: mongoose.Model<mongoose.Document, {}>;
 };

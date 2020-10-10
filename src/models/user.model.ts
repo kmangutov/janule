@@ -9,4 +9,4 @@ const UserSchema: mongoose.Schema = new Schema({
     name: { type: String, requried: true, unique: true },
 });
 
-export default mongoose.model<IUser>('JanuleUsers', UserSchema, 'janule_users');
+export default mongoose.model<IUser>('BorgeyesUsers', UserSchema, 'borgeyes_users');

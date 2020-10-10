@@ -29,7 +29,7 @@ mongoose
         return process.exit(1);
     });
 
-console.info('WELCOME TO JANULE .. BOT.. HI');
+console.info('WELCOME TO BORGEYES .. BOT.. HI');
 
 client.on('messageReactionAdd', async (reaction: Discord.MessageReaction, user: Discord.User) => {
     Reactions.handleReaction(reaction, user, client);

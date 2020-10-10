@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js';
-import { EMOJI_IDENTIFIER_MAP, Emojis, JANULE_SYNTHESIS } from './types';
+import { EMOJI_IDENTIFIER_MAP, Emojis, BORGEYES_SYNTHESIS } from './types';
 import MemeController from './controllers/meme.controller';
 
 async function handleReaction(reaction: Discord.MessageReaction, user: Discord.User, client: Discord.Client) {
@@ -12,7 +12,7 @@ async function handleReaction(reaction: Discord.MessageReaction, user: Discord.U
             case Emojis.Approve:
                 if (messageEmbeds.length > 0) {
                     const embed = messageEmbeds[0];
-                    if (embed.fields.length > 0 && embed.fields[0].value == JANULE_SYNTHESIS) {
+                    if (embed.fields.length > 0 && embed.fields[0].value == BORGEYES_SYNTHESIS) {
                         const synthesis = embed.fields[0].name;
                         console.info(`${reactionUser} approves of ${synthesis}`);
                         const maybeMeme = await MemeController.FindMeme(synthesis);
