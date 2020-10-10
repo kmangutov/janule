@@ -23,6 +23,9 @@
     "all": "npm run-script prettify && npm run-script build && npm run-script start"
   },
   "dependencies": {
+    "@tensorflow-models/blazeface": "0.0.5",
+    "@tensorflow/tfjs-converter": "^2.6.0",
+    "@tensorflow/tfjs-core": "^2.6.0",
     "canvas": "^2.6.1",
     "d3-node": "^2.2.2",
     "discord.js": "^12.2.0",
