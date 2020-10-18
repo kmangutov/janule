@@ -81,22 +81,20 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             }
             break;
         case Command.Covid:
-            // https://covidtracking.com/
-            fetch('https://api.covidtracking.com/v1/us/current.json')
+            // Generates a new botmessage with updated data (on the Github Actions *free* tier) every 6 hours using a
+            // simple Python script. See: https://github.com/lucasjcm/janule-botmessage-covid
+            fetch('https://raw.githubusercontent.com/lucasjcm/janule-botmessage-covid/master/botmessage.txt')
                 .then((response) => {
-                    return response.json();
+                    return response.text();
                 })
-                .then((data) => {
-                    const { death, deathIncrease } = data[0];
-                    const deathWithCommas = death.toLocaleString();
-                    const deathIncreaseWithCommas = deathIncrease.toLocaleString();
-                    message.channel.send(
-                        `${deathWithCommas} total COVID deaths in the US of A (${deathIncreaseWithCommas} new today)`,
-                    );
+                .then((botmessage: string) => {
+                    message.channel.send(botmessage);
                 })
                 .catch(() => {
-                    message.channel.send('An error happened. Fuck you.');
-                });
+                    const msg = 'An error happened and the issue has been logged somewhere (just in memory, and only ' +
+                        'until it is garbage collected). Fuck you.';
+                    message.channel.send(msg);
+                })
             return;
         case Command.DeleteMeme:
             if (args.length > 0) {
