@@ -96,6 +96,15 @@ export const handleCommand = async (command: Command, args: Args, username: stri
                 })
                 .catch(() => {
                     message.channel.send('An error happened. Fuck you.');
+                })
+                .then(() => {
+                    fetch('https://raw.githubusercontent.com/lucasjcm/janule-data-test/main/incidents.json')
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((data) => {
+                            message.channel.send(`${data["Incidents"][0]["UniqueId"]}`)
+                        })
                 });
             return;
         case Command.DeleteMeme:
