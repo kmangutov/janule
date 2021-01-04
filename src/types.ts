@@ -4,6 +4,7 @@ export enum Command {
     AddMeme,
     AddEdge,
     Covid,
+    Vaxxed,
     AddStrain,
     DeleteMeme,
     DeleteStrain,

@@ -96,6 +96,22 @@ export const handleCommand = async (command: Command, args: Args, username: stri
                     message.channel.send(msg);
                 })
             return;
+        case Command.Vaxxed:
+            // Generates a new botmessage with updated data (on the Github Actions *free* tier) every 6 hours using a
+            // simple Python script. See: https://github.com/lucasjcm/janule-botmessage-vaxxed
+            fetch('https://raw.githubusercontent.com/lucasjcm/janule-botmessage-vaxxed/master/botmessage.txt')
+                .then((response) => {
+                    return response.text();
+                })
+                .then((botmessage: string) => {
+                    message.channel.send(botmessage);
+                })
+                .catch(() => {
+                    const msg = 'An error happened and the issue has been logged somewhere (just in memory, and only ' +
+                        'until it is garbage collected). Fuck you.';
+                    message.channel.send(msg);
+                })
+            return;
         case Command.DeleteMeme:
             if (args.length > 0) {
                 const memeToDelete = args.join(' ');
