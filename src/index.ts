@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 import * as mongoose from 'mongoose';
+import * as log from 'log-to-file';
 
 import { handleCommand } from './command';
 import { parseCommand } from './parse';
@@ -47,8 +48,11 @@ client.on('message', async (message: Discord.Message) => {
         await UserController.CreateUser({ name: username });
         uid = await UserController.getUIDForDiscordName(username);
     }
+    
+    const messageMetadata = `Message received from ${username}, UID: ${uid}.`
+    console.info(messageMetadata);
+    log(messageMetadata, 'messages.log');
 
-    console.info('Message received from %s, UID: %s.', username, uid);
     const { command, args } = parseCommand(message.content);
 
     handleCommand(command, args, username, message);

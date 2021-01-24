@@ -28,6 +28,7 @@
     "discord.js": "^12.2.0",
     "express": "^4.17.1",
     "immutable": "^4.0.0-rc.12",
+    "log-to-file": "^2.0.2",
     "mongoose": "^5.9.15",
     "node": "^14.3.0",
     "node-fetch": "^2.6.1",
