@@ -1,16 +1,17 @@
 import * as Discord from 'discord.js';
-import { Args, Command, JANULE_SYNTHESIS } from './types';
+import { Args, Command, JANULE_SYNTHESIS, JANULE_SYNTHESIS_MEME_SEED } from './types';
 import { _STATS } from './index';
 import StrainController from './controllers/strains.controller';
 import { CANNABIS_SPECIES_PARSE_MAP } from './models/strains.model';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
 import MemeController from './controllers/meme.controller';
 import Message from './message';
-import Synth from './synth';
+import Synth, {SynthWithArgResponse} from './synth';
 import JanuleStatsController from './controllers/januleStats.controller';
 import UserController from './controllers/user.controller';
 import { renderToFile } from './render';
 import fetch from 'node-fetch';
+import { EmbedFieldData } from 'discord.js';
 
 const A_FLAG = '-a';
 const B_FLAG = '-b';
@@ -239,17 +240,23 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             break;
         case Command.Synth:
             let synthesis: string;
+            let synthWithArgsResponse: SynthWithArgResponse | null = null;
             if (args.length > 0) {
-                synthesis = await Synth.synthWithArg(args.join(' '));
+                synthWithArgsResponse = await Synth.synthWithArg(args.join(' '));
+                synthesis = synthWithArgsResponse.synthesis
             } else {
                 synthesis = await Synth.synth();
             }
             const flip = Math.floor(Math.random() * 2);
             const preface = flip == 1 ? 'How about: ' : 'Try this: ';
-            const synthMessageEmbed = new Discord.MessageEmbed().setColor('#0099ff').setTitle(preface).addFields({
-                name: synthesis,
-                value: JANULE_SYNTHESIS,
-            });
+            const messageFieldData: EmbedFieldData[] = [{ name: synthesis, value: JANULE_SYNTHESIS }]
+            if (synthWithArgsResponse !== null && synthWithArgsResponse.meme !== null) {
+                messageFieldData.push(
+                    { name: JANULE_SYNTHESIS_MEME_SEED, value: synthWithArgsResponse.meme._id, inline: false },
+                    { name: "Original Meme Name", value: synthWithArgsResponse.meme.name, inline: false },
+                )
+            }
+            const synthMessageEmbed = new Discord.MessageEmbed().setColor('#0099ff').setTitle(preface).addFields(messageFieldData);
             const synthesisMessage = await message.channel.send(synthMessageEmbed);
             Message.reactApproveRejectEmojis(synthesisMessage);
             break;

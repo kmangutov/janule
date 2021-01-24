@@ -6,3 +6,7 @@ build/
 
 # Contains secrets! Warning!
 secrets.json
+
+# Logger
+messages.log
+reactions.log
