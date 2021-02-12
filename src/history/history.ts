@@ -71,7 +71,7 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
             // Get a count of each word for non-bot messages
             if (user != botUser) {
                 message.content.split(' ').map((word) => {
-                    if (!(word in MOST_COMMON_WORDS || word in COMMAND_STRING_PARSE_MAP)) {
+                    if (!(MOST_COMMON_WORDS.includes(word) || word in COMMAND_STRING_PARSE_MAP)) {
                         const wordCount = channelWordStats.get(word) ?? 0;
                         channelWordStats.set(word, wordCount + 1);
                     }
