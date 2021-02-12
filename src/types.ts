@@ -3,14 +3,17 @@ import * as mongoose from 'mongoose';
 export enum Command {
     AddMeme,
     AddEdge,
-    Covid,
     AddStrain,
+    Covid,
     DeleteMeme,
     DeleteStrain,
     FindStrain,
+    GetChannelStats,
+    GetChannelURLs,
     GetMeme,
     GetMemes,
     GetUsers,
+    Graph,
     Help,
     Roll,
     RollJoint,
@@ -18,7 +21,6 @@ export enum Command {
     Stats,
     Synth,
     Thanks,
-    Graph,
 }
 
 export enum Emojis {

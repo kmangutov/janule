@@ -4,6 +4,7 @@ import { _STATS } from './index';
 import StrainController from './controllers/strains.controller';
 import { CANNABIS_SPECIES_PARSE_MAP } from './models/strains.model';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
+import History from './history/history';
 import MemeController from './controllers/meme.controller';
 import Message from './message';
 import Synth from './synth';
@@ -91,10 +92,11 @@ export const handleCommand = async (command: Command, args: Args, username: stri
                     message.channel.send(botmessage);
                 })
                 .catch(() => {
-                    const msg = 'An error happened and the issue has been logged somewhere (just in memory, and only ' +
+                    const msg =
+                        'An error happened and the issue has been logged somewhere (just in memory, and only ' +
                         'until it is garbage collected). Fuck you.';
                     message.channel.send(msg);
-                })
+                });
             return;
         case Command.DeleteMeme:
             if (args.length > 0) {
@@ -147,6 +149,12 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             } else {
                 message.channel.send(`Usage !j findstrain Dank Mangutov`);
             }
+            break;
+        case Command.GetChannelStats:
+            await History.getChannelStats(message);
+            break;
+        case Command.GetChannelURLs:
+            await History.getChannelURLs(message);
             break;
         case Command.GetMeme:
             if (args.length > 0) {

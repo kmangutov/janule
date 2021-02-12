@@ -11,6 +11,8 @@ export const COMMAND_STRING_PARSE_MAP = {
     deletememe: Command.DeleteMeme,
     deletestrain: Command.DeleteStrain,
     findstrain: Command.FindStrain,
+    getchannelstats: Command.GetChannelStats,
+    getchannelurls: Command.GetChannelURLs,
     getmeme: Command.GetMeme,
     getmemes: Command.GetMemes,
     getusers: Command.GetUsers,
