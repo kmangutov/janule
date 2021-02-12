@@ -70,12 +70,15 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
 
             // Get a count of each word for non-bot messages
             if (user != botUser) {
-                message.content.split(' ').map((word) => {
-                    if (!(MOST_COMMON_WORDS.includes(word) || word in COMMAND_STRING_PARSE_MAP)) {
-                        const wordCount = channelWordStats.get(word) ?? 0;
-                        channelWordStats.set(word, wordCount + 1);
-                    }
-                });
+                const words = message.content.split(' ');
+                if (words.length > 0) {
+                    words.map((word) => {
+                        if (!(MOST_COMMON_WORDS.includes(word) || word in COMMAND_STRING_PARSE_MAP)) {
+                            const wordCount = channelWordStats.get(word) ?? 0;
+                            channelWordStats.set(word, wordCount + 1);
+                        }
+                    });
+                }
             }
         });
         // Sort channelMessageStats by descending message count
