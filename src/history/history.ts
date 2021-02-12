@@ -48,7 +48,7 @@ async function sendChannelUniqueUrlsSummary(incomingMessage: Discord.Message) {
     messages.map((message) => getUrls(message.content).forEach((url) => urls.add(url)));
     const urlStrings: Array<string> = [];
     urls.forEach((url) => urlStrings.push(url));
-    incomingMessage.channel.send('```' + urlStrings.join('\n') + '```');
+    incomingMessage.channel.send('```' + urlStrings.join('\n').slice(0, 2000) + '```');
 }
 
 /**
