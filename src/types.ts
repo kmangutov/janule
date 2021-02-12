@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose';
-import { JANULE, SHORT_JANULE } from './parse';
 
 export enum Command {
     AddMeme,
@@ -100,8 +99,8 @@ export const MOST_COMMON_WORDS = [
     'just',
     'a',
     'u',
-    JANULE,
-    SHORT_JANULE,
+    '!j',
+    '!janule',
 ];
 
 export const JANULE_SYNTHESIS = 'janule-synthesis';
