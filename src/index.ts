@@ -48,8 +48,8 @@ client.on('message', async (message: Discord.Message) => {
         await UserController.CreateUser({ name: username });
         uid = await UserController.getUIDForDiscordName(username);
     }
-    
-    const messageMetadata = `Message received from ${username}, UID: ${uid}.`
+
+    const messageMetadata = `Message received from ${username}, UID: ${uid}.`;
     console.info(messageMetadata);
     log(messageMetadata, 'messages.log');
 

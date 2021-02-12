@@ -7,7 +7,7 @@ import { COMMAND_STRING_PARSE_MAP } from './parse';
 import History from './history/history';
 import MemeController from './controllers/meme.controller';
 import Message from './message';
-import Synth, {SynthWithArgResponse} from './synth';
+import Synth, { SynthWithArgResponse } from './synth';
 import JanuleStatsController from './controllers/januleStats.controller';
 import UserController from './controllers/user.controller';
 import { renderToFile } from './render';
@@ -110,10 +110,11 @@ export const handleCommand = async (command: Command, args: Args, username: stri
                     message.channel.send(botmessage);
                 })
                 .catch(() => {
-                    const msg = 'An error happened and the issue has been logged somewhere (just in memory, and only ' +
+                    const msg =
+                        'An error happened and the issue has been logged somewhere (just in memory, and only ' +
                         'until it is garbage collected). Fuck you.';
                     message.channel.send(msg);
-                })
+                });
             return;
         case Command.DeleteMeme:
             if (args.length > 0) {
@@ -251,20 +252,23 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             let synthWithArgsResponse: SynthWithArgResponse | null = null;
             if (args.length > 0) {
                 synthWithArgsResponse = await Synth.synthWithArg(args.join(' '));
-                synthesis = synthWithArgsResponse.synthesis
+                synthesis = synthWithArgsResponse.synthesis;
             } else {
                 synthesis = await Synth.synth();
             }
             const flip = Math.floor(Math.random() * 2);
             const preface = flip == 1 ? 'How about: ' : 'Try this: ';
-            const messageFieldData: EmbedFieldData[] = [{ name: synthesis, value: JANULE_SYNTHESIS }]
+            const messageFieldData: EmbedFieldData[] = [{ name: synthesis, value: JANULE_SYNTHESIS }];
             if (synthWithArgsResponse !== null && synthWithArgsResponse.meme !== null) {
                 messageFieldData.push(
                     { name: JANULE_SYNTHESIS_MEME_SEED, value: synthWithArgsResponse.meme._id, inline: false },
-                    { name: "Original Meme Name", value: synthWithArgsResponse.meme.name, inline: false },
-                )
+                    { name: 'Original Meme Name', value: synthWithArgsResponse.meme.name, inline: false },
+                );
             }
-            const synthMessageEmbed = new Discord.MessageEmbed().setColor('#0099ff').setTitle(preface).addFields(messageFieldData);
+            const synthMessageEmbed = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle(preface)
+                .addFields(messageFieldData);
             const synthesisMessage = await message.channel.send(synthMessageEmbed);
             Message.reactApproveRejectEmojis(synthesisMessage);
             break;
