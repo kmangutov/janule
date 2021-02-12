@@ -175,6 +175,7 @@ export const handleCommand = async (
             }
             break;
         case Command.GetChannelStats:
+            message.channel.send(`Getting statistics for ${message.channel.toString()}...this might take a while.`);
             await History.sendChannelStats(message, client);
             break;
         case Command.GetChannelURLs:

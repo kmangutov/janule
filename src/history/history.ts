@@ -48,7 +48,6 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
     let messages = await getChannelMessages(incomingMessage.channel.messages);
     if (messages.length > 0) {
         const botUser = client.user.username + '#' + client.user.discriminator;
-
         // Sort the messages by increasing timestamp
         messages.sort((messageA, messageB) => messageA.createdTimestamp - messageB.createdTimestamp);
 

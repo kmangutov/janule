@@ -92,6 +92,8 @@ export const MOST_COMMON_WORDS = [
     'time',
     'no',
     'just',
+    'a',
+    'u',
 ];
 
 export const JANULE_SYNTHESIS = 'janule-synthesis';
