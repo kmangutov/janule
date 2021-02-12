@@ -1,37 +1,38 @@
 {
-  "name": "janule",
-  "main": "build/src/index.js",
-  "version": "0.0.0",
-  "description": ". . . J A N U L E . B O T . . .",
-  "author": "Team Janule <no.email.yet>",
-  "engines": {
-    "node": "14.3.0"
-  },
-  "devDependencies": {
-    "@types/mongoose": "^5.7.21",
-    "@types/node": "~12.12.38",
-    "prettier": "~2.0.5",
-    "tsutils": "~3.17.0",
-    "typescript": "~3.8.3"
-  },
-  "scripts": {
-    "start": "node build/src/index.js",
-    "clean": "rm -rf node_modules/ build/",
-    "prettify": "npx prettier --write src/**/*",
-    "build": "rm -rf build && npx tsc --project tsconfig.release.json",
-    "build:watch": "rm -rf build && npx tsc --watch --project tsconfig.release.json",
-    "all": "npm run-script prettify && npm run-script build && npm run-script start"
-  },
-  "dependencies": {
-    "canvas": "^2.6.1",
-    "d3-node": "^2.2.2",
-    "discord.js": "^12.2.0",
-    "express": "^4.17.1",
-    "immutable": "^4.0.0-rc.12",
-    "log-to-file": "^2.0.2",
-    "mongoose": "^5.9.15",
-    "node": "^14.3.0",
-    "node-fetch": "^2.6.1",
-    "tslib": "~1.11.2"
-  }
+    "name": "janule",
+    "main": "build/src/index.js",
+    "version": "0.0.0",
+    "description": ". . . J A N U L E . B O T . . .",
+    "author": "Team Janule <no.email.yet>",
+    "engines": {
+        "node": "14.3.0"
+    },
+    "devDependencies": {
+        "@types/mongoose": "^5.7.21",
+        "@types/node": "~12.12.38",
+        "prettier": "~2.0.5",
+        "tsutils": "~3.17.0",
+        "typescript": "~3.8.3"
+    },
+    "scripts": {
+        "start": "node build/src/index.js",
+        "clean": "rm -rf node_modules/ build/",
+        "prettify": "npx prettier --write src/**/*",
+        "build": "rm -rf build && npx tsc --project tsconfig.release.json",
+        "build:watch": "rm -rf build && npx tsc --watch --project tsconfig.release.json",
+        "all": "npm run-script prettify && npm run-script build && npm run-script start"
+    },
+    "dependencies": {
+        "canvas": "^2.6.1",
+        "d3-node": "^2.2.2",
+        "discord.js": "^12.2.0",
+        "express": "^4.17.1",
+        "get-urls": "^10.0.0",
+        "immutable": "^4.0.0-rc.12",
+        "log-to-file": "^2.0.2",
+        "mongoose": "^5.9.15",
+        "node": "^14.3.0",
+        "node-fetch": "^2.6.1",
+        "tslib": "~1.11.2"
+    }
 }
