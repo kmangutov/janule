@@ -7,6 +7,7 @@ export const COMMAND_STRING_PARSE_MAP = {
     addmeme: Command.AddMeme,
     addedge: Command.AddEdge,
     covid: Command.Covid,
+    vaxxed: Command.Vaxxed,
     addstrain: Command.AddStrain,
     deletememe: Command.DeleteMeme,
     deletestrain: Command.DeleteStrain,

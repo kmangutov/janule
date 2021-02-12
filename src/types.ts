@@ -21,6 +21,7 @@ export enum Command {
     Stats,
     Synth,
     Thanks,
+    Vaxxed,
 }
 
 export enum Emojis {
@@ -34,6 +35,7 @@ export const EMOJI_IDENTIFIER_MAP = {
 };
 
 export const JANULE_SYNTHESIS = 'janule-synthesis';
+export const JANULE_SYNTHESIS_MEME_SEED = 'janule-synthesis-meme-seed';
 
 export type Args = (string | number)[];
 
