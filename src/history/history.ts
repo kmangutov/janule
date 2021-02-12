@@ -1,5 +1,7 @@
 import * as Discord from 'discord.js';
 import * as getUrls from 'get-urls';
+import { COMMAND_STRING_PARSE_MAP } from '../parse';
+import { MOST_COMMON_WORDS } from '../types';
 
 /**
  * Get all the messages from a channel. Discord's MessageManager API allows us to get 100
@@ -70,8 +72,10 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
             // Get a count of each word for non-bot messages
             if (user != botUser) {
                 message.content.split(' ').map((word) => {
-                    const wordCount = channelWordStats.get(word) ?? 0;
-                    channelWordStats.set(word, wordCount + 1);
+                    if (!(word in MOST_COMMON_WORDS || word in COMMAND_STRING_PARSE_MAP)) {
+                        const wordCount = channelWordStats.get(word) ?? 0;
+                        channelWordStats.set(word, wordCount + 1);
+                    }
                 });
             }
         });
