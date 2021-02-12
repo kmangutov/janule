@@ -1,7 +1,7 @@
 import { Args, Command } from './types';
 
-const JANULE = '!janule';
-const SHORT_JANULE = '!j';
+export const JANULE = '!janule';
+export const SHORT_JANULE = '!j';
 
 export const COMMAND_STRING_PARSE_MAP = {
     addmeme: Command.AddMeme,

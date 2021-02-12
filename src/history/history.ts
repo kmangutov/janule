@@ -73,7 +73,7 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
                 const words = message.content.split(' ');
                 if (words.length > 0) {
                     words.map((word) => {
-                        if (!(MOST_COMMON_WORDS.includes(word) || word in COMMAND_STRING_PARSE_MAP)) {
+                        if (!(MOST_COMMON_WORDS.includes(word) || word in COMMAND_STRING_PARSE_MAP) && word.length > 0) {
                             const wordCount = channelWordStats.get(word) ?? 0;
                             channelWordStats.set(word, wordCount + 1);
                         }
