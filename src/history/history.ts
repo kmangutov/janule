@@ -25,8 +25,11 @@ async function getChannelMessages(messageManager: Discord.MessageManager) {
     }
     return allMessages;
 }
-
-async function sendChannelUniqueUrlsSummary (message: Discord.Message) {
+/**
+ * Send a message with all the unique URLs of the channel for the given message @param.
+ * @param message
+ */
+async function sendChannelUniqueUrlsSummary(message: Discord.Message) {
     const messages = await getChannelMessages(message.channel.messages);
     let urls: Set<string> = new Set();
     messages.map((message) => getUrls(message.content).forEach((url) => urls.add(url)));
@@ -35,19 +38,55 @@ async function sendChannelUniqueUrlsSummary (message: Discord.Message) {
     message.channel.send('```' + urlStrings.join('\n') + '```');
 }
 
-async function sendChannelStats(incomingMessage: Discord.Message) {
+/**
+ * Send a message embed with statistics about the channel for the given message @param
+ * @param incomingMessage
+ */
+async function sendChannelStats(incomingMessage: Discord.Message, client: Discord.Client) {
     let messages = await getChannelMessages(incomingMessage.channel.messages);
     if (messages.length > 0) {
+        const botUser = client.user.username + '#' + client.user.discriminator;
+
+        // Sort the messages by increasing timestamp
         messages.sort((messageA, messageB) => messageA.createdTimestamp - messageB.createdTimestamp);
-        const firstMessageUser = `${messages[0].author.username}#${messages[0].author.discriminator} said : ${messages[0].content}`;
+
+        // Get the first message with content.length > 0
+        let firstMessageWithNonEmptyContentIdx = 0;
+        while (messages[firstMessageWithNonEmptyContentIdx].content.length === 0) {
+            firstMessageWithNonEmptyContentIdx++;
+        }
+        const firstMessage = messages[firstMessageWithNonEmptyContentIdx];
+        const firstMessageUser = `${firstMessage.author.username}#${firstMessage.author.discriminator} said : ${firstMessage.content}`;
+
         let channelMessageStats: Map<string, number> = new Map();
+        let channelWordStats: Map<string, number> = new Map();
+
+        // Map over all the messages and bump a message count for each user.
         messages.map((message) => {
             const user = `${message.author.username}#${message.author.discriminator}`;
             const userStats = channelMessageStats.get(user) ?? 0;
             channelMessageStats.set(user, userStats + 1);
+
+            // Get a count of each word for non-bot messages
+            if (user != botUser) {
+                message.content.split(' ').map((word) => {
+                    const wordCount = channelWordStats.get(word) ?? 0;
+                    channelWordStats.set(word, wordCount + 1);
+                });
+            }
         });
+        // Sort channelMessageStats by descending message count
+        channelMessageStats = sortMapByNumericalValueDescending(channelMessageStats);
+        channelWordStats = sortMapByNumericalValueDescending(channelWordStats);
+
         const channelMessageStatsArray = [];
+        const channelWordStatsArray = [];
+
         channelMessageStats.forEach((numMessages, user) => channelMessageStatsArray.push(`${user}: ${numMessages}`));
+        const words = Array.from(channelWordStats.keys());
+        for (let i = 0; i < 5; i++) {
+            channelWordStatsArray.push(`${words[i]}: ${channelWordStats.get(words[i])}`);
+        }
 
         const messageEmbed = new Discord.MessageEmbed()
             .setColor('#0099ff')
@@ -62,7 +101,11 @@ async function sendChannelStats(incomingMessage: Discord.Message) {
                     value: messages.length,
                 },
                 {
-                    name: 'First Message sent by:',
+                    name: 'Top 5 words:',
+                    value: channelWordStatsArray.join('\n'),
+                },
+                {
+                    name: 'First Message (text):',
                     value: firstMessageUser,
                 },
             ]);
@@ -72,7 +115,11 @@ async function sendChannelStats(incomingMessage: Discord.Message) {
     }
 }
 
+function sortMapByNumericalValueDescending(map: Map<string, number>): Map<string, number> {
+    return new Map<string, number>([...map].sort((a, b) => b[1] - a[1]));
+}
+
 export default {
     sendChannelStats,
-    sendChannelUniqueUrlsSummary ,
+    sendChannelUniqueUrlsSummary,
 };

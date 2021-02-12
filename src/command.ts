@@ -30,7 +30,13 @@ const trimMessage = (prefix: string | null, body: string) => {
     }
 };
 
-export const handleCommand = async (command: Command, args: Args, username: string, message: Discord.Message) => {
+export const handleCommand = async (
+    command: Command,
+    args: Args,
+    username: string,
+    message: Discord.Message,
+    client: Discord.Client,
+) => {
     switch (command) {
         default:
             // If the message doesn't parse into a command, it is ignored.
@@ -169,7 +175,7 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             }
             break;
         case Command.GetChannelStats:
-            await History.sendChannelStats(message);
+            await History.sendChannelStats(message, client);
             break;
         case Command.GetChannelURLs:
             await History.sendChannelUniqueUrlsSummary(message);

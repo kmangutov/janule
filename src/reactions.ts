@@ -6,7 +6,7 @@ import * as log from 'log-to-file';
 
 async function handleReaction(reaction: Discord.MessageReaction, user: Discord.User, client: Discord.Client) {
     const reactionUser = user.username + '#' + user.discriminator;
-    const botUser = client.user.username + '#' + user.discriminator;
+    const botUser = client.user.username + '#' + client.user.discriminator;
     const identifier = reaction.emoji.identifier;
     const messageEmbeds = reaction.message.embeds;
     if (reactionUser !== botUser && identifier in EMOJI_IDENTIFIER_MAP) {
