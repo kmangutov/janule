@@ -26,7 +26,7 @@ async function getChannelMessages(messageManager: Discord.MessageManager) {
     return allMessages;
 }
 
-async function getChannelURLs(message: Discord.Message) {
+async function sendChannelUniqueUrlsSummary (message: Discord.Message) {
     const messages = await getChannelMessages(message.channel.messages);
     let urls: Set<string> = new Set();
     messages.map((message) => getUrls(message.content).forEach((url) => urls.add(url)));
@@ -35,7 +35,7 @@ async function getChannelURLs(message: Discord.Message) {
     message.channel.send('```' + urlStrings.join('\n') + '```');
 }
 
-async function getChannelStats(incomingMessage: Discord.Message) {
+async function sendChannelStats(incomingMessage: Discord.Message) {
     let messages = await getChannelMessages(incomingMessage.channel.messages);
     if (messages.length > 0) {
         messages.sort((messageA, messageB) => messageA.createdTimestamp - messageB.createdTimestamp);
@@ -73,6 +73,6 @@ async function getChannelStats(incomingMessage: Discord.Message) {
 }
 
 export default {
-    getChannelStats,
-    getChannelURLs,
+    sendChannelStats,
+    sendChannelUniqueUrlsSummary ,
 };

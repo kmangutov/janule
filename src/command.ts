@@ -169,10 +169,10 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             }
             break;
         case Command.GetChannelStats:
-            await History.getChannelStats(message);
+            await History.sendChannelStats(message);
             break;
         case Command.GetChannelURLs:
-            await History.getChannelURLs(message);
+            await History.sendChannelUniqueUrlsSummary(message);
             break;
         case Command.GetMeme:
             if (args.length > 0) {
