@@ -2,13 +2,19 @@ import * as Discord from 'discord.js';
 import * as getUrls from 'get-urls';
 import { COMMAND_STRING_PARSE_MAP } from '../parse';
 import { MOST_COMMON_WORDS } from '../types';
+import { performance } from 'perf_hooks';
+type ChannelMessagesResponse = {
+    messages: Discord.Message[];
+    timeElapsed: number;
+};
 
 /**
  * Get all the messages from a channel. Discord's MessageManager API allows us to get 100
  * messages at a time.
  * @param messageManager
  */
-async function getChannelMessages(messageManager: Discord.MessageManager) {
+async function getChannelMessages(messageManager: Discord.MessageManager): Promise<ChannelMessagesResponse> {
+    const t0 = performance.now();
     let allMessages: Array<Discord.Message> = [];
     let messages = await messageManager.fetch({ limit: 100 });
     let messageArray = messages.array();
@@ -25,19 +31,24 @@ async function getChannelMessages(messageManager: Discord.MessageManager) {
             idx = messageArray[size - 1].id;
         }
     }
-    return allMessages;
+    const t1 = performance.now();
+    return {
+        messages: allMessages,
+        timeElapsed: t1 - t0,
+    };
 }
 /**
  * Send a message with all the unique URLs of the channel for the given message @param.
- * @param message
+ * @param incomingMessage
  */
-async function sendChannelUniqueUrlsSummary(message: Discord.Message) {
-    const messages = await getChannelMessages(message.channel.messages);
+async function sendChannelUniqueUrlsSummary(incomingMessage: Discord.Message) {
+    const channelMessagesResponse = await getChannelMessages(incomingMessage.channel.messages);
+    const { messages } = channelMessagesResponse;
     let urls: Set<string> = new Set();
     messages.map((message) => getUrls(message.content).forEach((url) => urls.add(url)));
     const urlStrings: Array<string> = [];
     urls.forEach((url) => urlStrings.push(url));
-    message.channel.send('```' + urlStrings.join('\n') + '```');
+    incomingMessage.channel.send('```' + urlStrings.join('\n') + '```');
 }
 
 /**
@@ -45,7 +56,8 @@ async function sendChannelUniqueUrlsSummary(message: Discord.Message) {
  * @param incomingMessage
  */
 async function sendChannelStats(incomingMessage: Discord.Message, client: Discord.Client) {
-    let messages = await getChannelMessages(incomingMessage.channel.messages);
+    const channelMessagesResponse = await getChannelMessages(incomingMessage.channel.messages);
+    const { messages } = channelMessagesResponse;
     if (messages.length > 0) {
         const botUser = client.user.username + '#' + client.user.discriminator;
         // Sort the messages by increasing timestamp
@@ -96,7 +108,6 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
         for (let i = 0; i < 5; i++) {
             channelWordStatsArray.push(`${words[i]}: ${channelWordStats.get(words[i])}`);
         }
-
         const messageEmbed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Channel Statistics:')
@@ -116,6 +127,10 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
                 {
                     name: 'First Message (text):',
                     value: firstMessageUser,
+                },
+                {
+                    name: 'Time to retrieve all messages:',
+                    value: `${(channelMessagesResponse.timeElapsed / 1000).toFixed(2)} seconds.`,
                 },
             ]);
         incomingMessage.channel.send(messageEmbed);

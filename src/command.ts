@@ -179,6 +179,7 @@ export const handleCommand = async (
             await History.sendChannelStats(message, client);
             break;
         case Command.GetChannelURLs:
+            message.channel.send(`Getting unique URLs for ${message.channel.toString()}...this might take a while.`);
             await History.sendChannelUniqueUrlsSummary(message);
             break;
         case Command.GetMeme:

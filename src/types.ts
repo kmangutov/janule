@@ -101,6 +101,8 @@ export const MOST_COMMON_WORDS = [
     'u',
     '!j',
     '!janule',
+    'was',
+    'im',
 ];
 
 export const JANULE_SYNTHESIS = 'janule-synthesis';
