@@ -8,9 +8,11 @@ interface ICreateMemeInput {
 }
 
 async function AddEdge(memeToUpdate: IMeme, edgeID: IMeme['_id']): Promise<IMeme> {
+    const memeToUpdateUniqueEdges = new Set(memeToUpdate['edges']);
+    memeToUpdateUniqueEdges.add(edgeID);
     return await Meme.findByIdAndUpdate(memeToUpdate['_id'], {
         $set: {
-            edges: memeToUpdate['edges'].concat(edgeID),
+            edges: Array.from(memeToUpdateUniqueEdges),
         },
     }).then((document) => {
         return document;
