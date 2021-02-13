@@ -16,17 +16,17 @@ async function handleReaction(reaction: Discord.MessageReaction, user: Discord.U
                     const embed = messageEmbeds[0];
                     if (embed.fields.length > 0 && embed.fields[0].value == JANULE_SYNTHESIS) {
                         const synthesis = embed.fields[0].name;
-                        const reactionLogMessage = `${reactionUser} approves of ${synthesis}`
+                        const reactionLogMessage = `${reactionUser} approves of ${synthesis}`;
                         console.info(reactionLogMessage);
                         log(reactionLogMessage, 'reactions.log');
                         const maybeMeme = await MemeController.FindMeme(synthesis);
                         if (maybeMeme == null) {
-                            const edges = []
-                            let memes: IMeme[] = []
+                            const edges = [];
+                            let memes: IMeme[] = [];
                             if (embed.fields.length > 1 && embed.fields[1].name == JANULE_SYNTHESIS_MEME_SEED) {
-                                const originalMemeID = embed.fields[1].value
-                                memes = await MemeController.GetMemesByID([originalMemeID])
-                                edges.push(originalMemeID)
+                                const originalMemeID = embed.fields[1].value;
+                                memes = await MemeController.GetMemesByID([originalMemeID]);
+                                edges.push(originalMemeID);
                             }
                             const meme = await MemeController.CreateMeme({
                                 name: synthesis,
@@ -34,10 +34,12 @@ async function handleReaction(reaction: Discord.MessageReaction, user: Discord.U
                                 edges: edges,
                             });
                             if (memes.length > 0) {
-                                const originalMeme = await MemeController.AddEdge(memes[0], meme._id)
-                                reaction.message.channel.send(`Successfully added meme: "${meme.name}" with an edge to "${originalMeme.name}"`);
+                                const originalMeme = await MemeController.AddEdge(memes[0], meme._id);
+                                reaction.message.channel.send(
+                                    `Successfully added meme: "${meme.name}" with an edge to "${originalMeme.name}"`,
+                                );
                             } else {
-                            reaction.message.channel.send(`Successfully added meme: "${meme.name}"`);
+                                reaction.message.channel.send(`Successfully added meme: "${meme.name}"`);
                             }
                         } else {
                             console.info(`${synthesis} already exists as a meme`);
