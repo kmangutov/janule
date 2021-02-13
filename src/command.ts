@@ -59,8 +59,10 @@ export const handleCommand = async (
                     } else {
                         const memeA = memeASearch[0];
                         const memeB = memeBSearch[0];
-                        const retVal = await MemeController.AddEdge(memeA, memeB._id);
-                        message.channel.send(`Added ${memeB.name} to ${retVal.name}'s edges.`);
+                        const retValA = await MemeController.AddEdge(memeA, memeB._id);
+                        message.channel.send(`Added ${memeB.name} to ${retValA.name}'s edges.`);
+                        const retValB = await MemeController.AddEdge(memeB, memeA._id);
+                        message.channel.send(`Added ${memeA.name} to ${retValB.name}'s edges.`);
                     }
                 } else {
                     message.channel.send(`Meme ${memeASeachParam} or ${memeBSearchParam} not found`);
