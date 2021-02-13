@@ -4,6 +4,7 @@ import { _STATS } from './index';
 import StrainController from './controllers/strains.controller';
 import { CANNABIS_SPECIES_PARSE_MAP } from './models/strains.model';
 import { COMMAND_STRING_PARSE_MAP } from './parse';
+import History from './history/history';
 import MemeController from './controllers/meme.controller';
 import Message from './message';
 import Synth, { SynthWithArgResponse } from './synth';
@@ -29,7 +30,13 @@ const trimMessage = (prefix: string | null, body: string) => {
     }
 };
 
-export const handleCommand = async (command: Command, args: Args, username: string, message: Discord.Message) => {
+export const handleCommand = async (
+    command: Command,
+    args: Args,
+    username: string,
+    message: Discord.Message,
+    client: Discord.Client,
+) => {
     switch (command) {
         default:
             // If the message doesn't parse into a command, it is ignored.
@@ -168,6 +175,14 @@ export const handleCommand = async (command: Command, args: Args, username: stri
             } else {
                 message.channel.send(`Usage !j findstrain Dank Mangutov`);
             }
+            break;
+        case Command.GetChannelStats:
+            message.channel.send(`Getting statistics for ${message.channel.toString()}...this might take a while.`);
+            await History.sendChannelStats(message, client);
+            break;
+        case Command.GetChannelURLs:
+            message.channel.send(`Getting unique URLs for ${message.channel.toString()}...this might take a while.`);
+            await History.sendChannelUniqueUrlsSummary(message);
             break;
         case Command.GetMeme:
             if (args.length > 0) {

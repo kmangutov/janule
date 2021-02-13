@@ -55,5 +55,5 @@ client.on('message', async (message: Discord.Message) => {
 
     const { command, args } = parseCommand(message.content);
 
-    handleCommand(command, args, username, message);
+    handleCommand(command, args, username, message, client);
 });
