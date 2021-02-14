@@ -19,6 +19,16 @@ async function AddEdge(memeToUpdate: IMeme, edgeID: IMeme['_id']): Promise<IMeme
     });
 }
 
+async function SetEdges(memeToUpdate: IMeme, edges: Array<IMeme['_id']>): Promise<IMeme> {
+    return await Meme.findByIdAndUpdate(memeToUpdate['_id'], {
+        $set: {
+            edges: Array.from(new Set(edges)),
+        },
+    }).then((document) => {
+        return document;
+    });
+}
+
 async function CreateMeme(meme: ICreateMemeInput): Promise<IMeme> {
     return Meme.create(meme)
         .then((data: IMeme) => {
@@ -30,7 +40,24 @@ async function CreateMeme(meme: ICreateMemeInput): Promise<IMeme> {
 }
 
 async function FindMeme(search: string): Promise<IMeme | null> {
+    let maybeMeme = await FindMemeByName(search);
+    if (maybeMeme == null) {
+        maybeMeme = await FindMemeByID(search);
+    }
+    return maybeMeme;
+}
+
+async function FindMemeByName(search: string): Promise<IMeme | null> {
     const maybeMeme = await Meme.find({ name: search });
+    if (maybeMeme.length > 0) {
+        return maybeMeme[0];
+    } else {
+        return null;
+    }
+}
+
+async function FindMemeByID(search: string): Promise<IMeme | null> {
+    const maybeMeme = await Meme.find({ _id: search });
     if (maybeMeme.length > 0) {
         return maybeMeme[0];
     } else {
@@ -56,11 +83,14 @@ async function GetMemes(): Promise<Array<IMeme>> {
             },
             { $sort: { edge_count: -1 } },
         ])
-        .limit(30)
         .toArray()
         .then((documents) => {
             return documents;
         });
+}
+
+async function GetMemeByID(id: IMeme['_id']): Promise<IMeme | null> {
+    return await Meme.findById(id);
 }
 
 async function GetMemesByID(ids: Array<IMeme['_id']>): Promise<IMeme[]> {
@@ -103,6 +133,14 @@ async function RollMeme(): Promise<IMeme> {
         });
 }
 
+async function RemoveEdge(meme: IMeme, edgeToRemove: IMeme['_id']): Promise<IMeme> {
+    return await Meme.findByIdAndUpdate(meme._id, {
+        $set: {
+            edges: Array.from(meme.edges.filter((edge) => edge != edgeToRemove)),
+        },
+    });
+}
+
 export default {
     AddEdge,
     CreateMeme,
@@ -110,7 +148,10 @@ export default {
     FindMemes,
     DeleteMemeByName,
     DeleteMemeByID,
+    GetMemeByID,
     GetMemes,
     GetMemesByID,
+    RemoveEdge,
     RollMeme,
+    SetEdges,
 };

@@ -126,15 +126,19 @@ export const handleCommand = async (
             return;
         case Command.DeleteMeme:
             if (args.length > 0) {
-                const memeToDelete = args.join(' ');
-                let deletionResponse = await MemeController.DeleteMemeByName(memeToDelete);
-                if (deletionResponse > 0) {
-                    message.channel.send(`Deleted meme: ${memeToDelete}`);
-                } else {
-                    deletionResponse = await MemeController.DeleteMemeByID(memeToDelete);
+                const memeToDeleteArg = args.join(' ');
+                const memeToDelete = await MemeController.FindMeme(memeToDeleteArg);
+                if (memeToDelete != null) {
+                    memeToDelete.edges.map(async (edge) => {
+                        let edgeMeme = await MemeController.GetMemeByID(edge);
+                        await MemeController.RemoveEdge(edgeMeme, memeToDelete._id);
+                    });
+                    let deletionResponse = await MemeController.DeleteMemeByID(memeToDelete);
                     if (deletionResponse > 0) {
                         message.channel.send(`Deleted meme: ${memeToDelete}`);
                     }
+                } else {
+                    message.channel.send(`Could not find meme: ${memeToDeleteArg}`);
                 }
             } else {
                 message.channel.send(`Please supply a meme's name or ID to delete it.`);
@@ -217,20 +221,64 @@ export const handleCommand = async (
                 message.channel.send('Please specify a meme to get.');
             }
             break;
-        case Command.GetMemes:
+        case Command.CleanMemes:
             const memes = await MemeController.GetMemes();
-            let results = memes.map((value) => {
-                return {
-                    meme: String(value.name),
-                    creator: String(value.creator ? value.creator : 'Unknown'),
-                };
+            memes.forEach(async (meme) => {
+                let edges = meme.edges ?? [];
+                if (edges.length > 0) {
+                    console.log(`Evaluating meme ${meme.name} with ${meme.edges.length} edges.`);
+                    const memeEdgeSet = new Set(edges);
+                    const size = memeEdgeSet.size;
+                    if (size != edges.length) {
+                        edges = Array.from(memeEdgeSet);
+                        await MemeController.SetEdges(meme, edges);
+                    }
+                    edges.forEach(async (edge) => {
+                        const edgeMeme = await MemeController.GetMemesByID([edge]);
+                        if (edgeMeme.length == 0 || edgeMeme[0] == null) {
+                            console.log(`
+                                Bad Edge on ${meme.name} - ${meme._id}.
+                                Bad Edge is an edge to ${edge}
+                                All edges: ${meme.edges}
+                            `);
+                            memeEdgeSet.delete(edge);
+                        } else {
+                            const edgeMemeResolved = edgeMeme[0];
+                            const edgeMemeEdges = edgeMemeResolved.edges ?? [];
+                            if (edgeMemeEdges.length === 0 || edgeMemeEdges.find((edge) => edge == meme._id) == null) {
+                                console.log(
+                                    `${edgeMemeResolved.name} needs an edge back to ${meme.name}.. adding now.`,
+                                );
+                                await MemeController.AddEdge(edgeMemeResolved, meme._id);
+                            }
+                        }
+                        if (edge == meme._id) {
+                            console.log(`Self referential meme: ${meme.name} - ${meme.id}`);
+                            memeEdgeSet.delete(edge);
+                        }
+                        if (size != memeEdgeSet.size) {
+                            console.log(`Corrected edges: ${{ ...memeEdgeSet }}`);
+                            await MemeController.SetEdges(meme, Array.from(memeEdgeSet));
+                        }
+                    });
+                }
             });
-            let resultString = results
-                .map((value, index) => {
-                    return index + ': ' + value.meme + ' \n Created By: ' + value.creator;
-                })
-                .join('\n');
-            message.channel.send(trimMessage('Current memes: \n', resultString));
+
+            break;
+        case Command.GetMemesByID:
+            if (args.length > 0) {
+                const memes = await MemeController.GetMemesByID(args);
+                const memeData: EmbedFieldData[] = memes.map((meme) => {
+                    return {
+                        name: meme.name,
+                        value: `ID: ${meme._id} Edges: ${meme.edges}`,
+                    };
+                });
+                message.channel.send(new Discord.MessageEmbed().addFields(memeData));
+            } else {
+                message.channel.send('Please specify ID(s) of meme(s) to get.');
+            }
+
             break;
         case Command.GetUsers:
             const users = await UserController.getUsers();

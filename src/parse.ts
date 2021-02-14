@@ -15,7 +15,7 @@ export const COMMAND_STRING_PARSE_MAP = {
     getchannelstats: Command.GetChannelStats,
     getchannelurls: Command.GetChannelURLs,
     getmeme: Command.GetMeme,
-    getmemes: Command.GetMemes,
+    getmemesbyid: Command.GetMemesByID,
     getusers: Command.GetUsers,
     help: Command.Help,
     roll: Command.Roll,

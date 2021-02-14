@@ -1,9 +1,11 @@
 // This module is for rendering a png image of the meme graph
 // which can be sent to discord or rendered online
 
-const D3Node = require('d3-node');
-const fs = require('fs');
-const canvasModule = require('canvas'); // supports node-canvas v1 & v2.x
+import D3Node = require('d3-node');
+import fs = require('fs');
+import canvasModule = require('canvas'); // supports node-canvas v1 & v2.x
+import os = require('os');
+import path = require('path');
 
 const options = { canvasModule: canvasModule };
 const d3n = new D3Node(options); // pass it node-canvas
@@ -13,8 +15,8 @@ import Meme, { IMeme } from './models/meme.model';
 // Format from http://bl.ocks.org/jose187/4733747
 // Given Memes, convert to graph format.
 const memesToDag = async (memes: IMeme[]) => {
-    var memeIDToInt = {};
-    var counter = 0;
+    const memeIDToInt: Map<string, number> = new Map();
+    let counter = 0;
 
     let parsedMemes = memes.map((meme) => {
         return {
@@ -31,7 +33,8 @@ const memesToDag = async (memes: IMeme[]) => {
             meme.edges.map((edge) => {
                 const targetMeme = parsedMemes.find((item) => item.uid == edge);
                 if (targetMeme === undefined) {
-                    console.log(edge);
+                    console.log(meme.uid);
+                    console.log(meme.edges);
                 } else {
                     targetMeme.display = true;
                 }
@@ -71,9 +74,6 @@ const memesToDag = async (memes: IMeme[]) => {
 };
 
 function tempFile(name = 'temp_file', data = '', encoding = 'utf8') {
-    const os = require('os');
-    const path = require('path');
-
     return new Promise((resolve, reject) => {
         const tempPath = path.join(os.tmpdir(), 'janule-');
         fs.mkdtemp(tempPath, (err, folder) => {
@@ -169,7 +169,7 @@ export const renderToFile = async () => {
     let paintPromise = paint(canvas);
     await paintPromise;
 
-    return tempFile('temp-image.png').then(async (path) => {
+    return tempFile('temp-image.png').then(async (path: string) => {
         // Draw on your canvas, then output canvas to png
 
         canvas.pngStream().pipe(fs.createWriteStream(path));
