@@ -102,6 +102,30 @@ async function GetMemesByID(ids: Array<IMeme['_id']>): Promise<IMeme[]> {
     });
 }
 
+async function GetMiniGraph(memeArg: string): Promise<Array<IMeme> | null> {
+    const maybeMeme = await FindMeme(memeArg);
+    if (maybeMeme != null) {
+        let miniGraphIDs: Map<string, boolean> = new Map();
+        miniGraphIDs.set(maybeMeme._id.toString(), true);
+        let edges = maybeMeme.edges;
+        while (edges.length != 0) {
+            const edgeMeme = await GetMemeByID(edges.shift());
+            miniGraphIDs.set(edgeMeme._id.toString(), true);
+            edgeMeme.edges.forEach((edgeMemeEdgeRaw) => {
+                let edgeMemeEdge = edgeMemeEdgeRaw.toString();
+                let visitedOrDiscovered = miniGraphIDs.get(edgeMemeEdge);
+                if (visitedOrDiscovered == null) {
+                    edges.push(edgeMemeEdge);
+                    miniGraphIDs.set(edgeMemeEdge, false);
+                }
+            });
+        }
+        const memes = await GetMemesByID(Array.from(miniGraphIDs.keys()));
+        return memes;
+    }
+    return null;
+}
+
 async function DeleteMemeByID(id: IMeme['_id']): Promise<number> {
     const deleteStatus = await Meme.deleteOne({ _id: id })
         .then((data) => {
@@ -151,6 +175,7 @@ export default {
     GetMemeByID,
     GetMemes,
     GetMemesByID,
+    GetMiniGraph,
     RemoveEdge,
     RollMeme,
     SetEdges,
