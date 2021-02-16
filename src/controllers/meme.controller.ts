@@ -1,3 +1,4 @@
+import * as mongoose from 'mongoose';
 import Meme, { IMeme } from '../models/meme.model';
 import { IUser } from '../models/user.model';
 
@@ -57,12 +58,13 @@ async function FindMemeByName(search: string): Promise<IMeme | null> {
 }
 
 async function FindMemeByID(search: string): Promise<IMeme | null> {
-    const maybeMeme = await Meme.find({ _id: search });
-    if (maybeMeme.length > 0) {
-        return maybeMeme[0];
-    } else {
-        return null;
+    if (mongoose.Types.ObjectId.isValid(search)) {
+        const maybeMeme = await Meme.find({ _id: search });
+        if (maybeMeme.length > 0) {
+            return maybeMeme[0];
+        }
     }
+    return null;
 }
 
 async function FindMemes(search: string): Promise<Array<IMeme>> {
