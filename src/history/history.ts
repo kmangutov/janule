@@ -37,6 +37,7 @@ async function getChannelMessages(messageManager: Discord.MessageManager): Promi
         timeElapsed: t1 - t0,
     };
 }
+
 /**
  * Send a message with all the unique URLs of the channel for the given message @param.
  * @param incomingMessage
@@ -73,18 +74,26 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
 
         let channelMessageStats: Map<string, number> = new Map();
         let channelWordStats: Map<string, number> = new Map();
+        let mostReactedMessage: Discord.Message = null;
+        let mostReactions = 0;
 
         // Map over all the messages and bump a message count for each user.
-        messages.map((message) => {
+        messages.forEach((message) => {
             const user = `${message.author.username}#${message.author.discriminator}`;
             const userStats = channelMessageStats.get(user) ?? 0;
             channelMessageStats.set(user, userStats + 1);
+
+            const numReactions = message.reactions.cache.size;
+            if (numReactions > mostReactions) {
+                mostReactedMessage = message;
+                mostReactions = numReactions;
+            }
 
             // Get a count of each word for non-bot messages
             if (user != botUser) {
                 const words = message.content.split(' ');
                 if (words.length > 0) {
-                    words.map((word) => {
+                    words.forEach((word) => {
                         if (
                             !(MOST_COMMON_WORDS.includes(word) || word in COMMAND_STRING_PARSE_MAP) &&
                             word.length > 0
@@ -108,6 +117,12 @@ async function sendChannelStats(incomingMessage: Discord.Message, client: Discor
         for (let i = 0; i < 5; i++) {
             channelWordStatsArray.push(`${words[i]}: ${channelWordStats.get(words[i])}`);
         }
+
+        console.log(                {
+            name: 'Most Reacted Message (text):',
+            value: mostReactedMessage.content,
+        },)
+
         const messageEmbed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Channel Statistics:')
