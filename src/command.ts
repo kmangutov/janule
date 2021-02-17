@@ -335,7 +335,7 @@ export const handleCommand = async (
             message.channel.send(`I appreciate you! I've been thanked ${januleStats.thanksCount} times!`);
             break;
         case Command.Graph:
-            let renderPromise = renderToFile();
+            let renderPromise = renderToFile(args.join(' '));
             renderPromise.then((_path: string) => {
                 message.channel.send('', {
                     files: [_path],

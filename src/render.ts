@@ -6,11 +6,12 @@ import fs = require('fs');
 import canvasModule = require('canvas'); // supports node-canvas v1 & v2.x
 import os = require('os');
 import path = require('path');
+import MemeController from './controllers/meme.controller';
 
 const options = { canvasModule: canvasModule };
 const d3n = new D3Node(options); // pass it node-canvas
 
-import Meme, { IMeme } from './models/meme.model';
+import { IMeme } from './models/meme.model';
 
 // Format from http://bl.ocks.org/jose187/4733747
 // Given Memes, convert to graph format.
@@ -90,83 +91,84 @@ function tempFile(name = 'temp_file', data = '', encoding = 'utf8') {
     });
 }
 
-function paint(canvas, root = '') {
-    return Meme.collection
-        .find()
-        .toArray()
-        .then(async (documents) => {
-            // Source: https://bl.ocks.org/jodyphelan/5dc989637045a0f48418101423378fbd
+async function paint(canvas, memes: Array<IMeme>, root = '') {
+    // Source: https://bl.ocks.org/jodyphelan/5dc989637045a0f48418101423378fbd
 
-            const WIDTH = 800;
-            const HEIGHT = 600;
+    const WIDTH = 800;
+    const HEIGHT = 800;
 
-            const obj = await memesToDag(documents);
+    const obj = await memesToDag(memes);
 
-            const d3 = d3n.d3;
-            const context = canvas.getContext('2d');
-            var simulation = d3
-                .forceSimulation()
-                .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
-                .force('x', d3.forceX(WIDTH / 2).strength(0.1))
-                .force('y', d3.forceY(HEIGHT / 2).strength(0.1))
-                .force('charge', d3.forceManyBody().strength(-50))
-                .force(
-                    'link',
-                    d3
-                        .forceLink()
-                        .strength(1)
-                        .id(function (d) {
-                            return d.group;
-                        }),
-                )
-                .alphaTarget(0)
-                .alphaDecay(0.05);
+    const d3 = d3n.d3;
+    const context = canvas.getContext('2d');
+    var simulation = d3
+        .forceSimulation()
+        .force('center', d3.forceCenter(WIDTH / 2, HEIGHT / 2))
+        .force('x', d3.forceX(WIDTH / 2).strength(0.001))
+        .force('y', d3.forceY(HEIGHT / 2).strength(0.001))
+        .force('charge', d3.forceManyBody().strength(-50))
+        .force(
+            'link',
+            d3
+                .forceLink()
+                .strength(1)
+                .id(function (d) {
+                    return d.group;
+                }),
+        )
+        .alphaTarget(0)
+        .alphaDecay(0.05);
 
-            function tick() {
-                const COLOR_GRAY = '#E1E5E5';
-                context.save();
-                console.log('######## TICK');
+    function tick() {
+        const COLOR_GRAY = '#E1E5E5';
+        context.save();
+        // console.log('######## TICK');
 
-                context.clearRect(0, 0, WIDTH, HEIGHT);
+        context.clearRect(0, 0, WIDTH, HEIGHT);
 
-                obj.links.forEach(function (d) {
-                    context.beginPath();
-                    context.moveTo(d.source.x, d.source.y);
-                    context.lineTo(d.target.x, d.target.y);
-                    context.strokeStyle = COLOR_GRAY;
-                    context.stroke();
-                });
-
-                // Draw the nodes
-                const radius = 2;
-                obj.nodes.forEach(function (d, i) {
-                    context.beginPath();
-                    context.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
-                    context.fillStyle = COLOR_GRAY;
-                    context.fill();
-
-                    context.fillText(d.name, d.x + 2, d.y + 2);
-                });
-
-                context.restore();
-            }
-
-            simulation.nodes(obj.nodes).on('tick', tick);
-            simulation.force('link').links(obj.links);
-
-            for (var i = 0; i < 20; i++) {
-                simulation.tick();
-            }
-
-            // TODO: Race condition here, sometimes graph is written to file
-            // before simulation is ran???
-            return Promise.resolve();
+        obj.links.forEach(function (d) {
+            context.beginPath();
+            context.moveTo(d.source.x, d.source.y);
+            context.lineTo(d.target.x, d.target.y);
+            context.strokeStyle = COLOR_GRAY;
+            context.stroke();
         });
+
+        // Draw the nodes
+        const radius = 2;
+        obj.nodes.forEach(function (d, i) {
+            context.beginPath();
+            context.arc(d.x, d.y, radius, 0, 2 * Math.PI, true);
+            context.fillStyle = COLOR_GRAY;
+            context.fill();
+
+            context.fillText(d.name, d.x + 2, d.y + 2);
+        });
+
+        context.restore();
+    }
+
+    simulation.nodes(obj.nodes).on('tick', tick);
+    simulation.force('link').links(obj.links);
+
+    for (var i = 0; i < 20; i++) {
+        simulation.tick();
+    }
+
+    // TODO: Race condition here, sometimes graph is written to file
+    // before simulation is ran???
+    return Promise.resolve();
 }
 
-export const renderToFile = async () => {
-    const canvas = d3n.createCanvas(960, 500);
-    let paintPromise = paint(canvas);
+export const renderToFile = async (miniGraphArg: string = '') => {
+    const canvas = d3n.createCanvas(960, 900);
+    let memes: Array<IMeme>;
+    if (miniGraphArg) {
+        memes = await MemeController.GetMiniGraph(miniGraphArg);
+    } else {
+        memes = await MemeController.GetMemes();
+    }
+    let paintPromise = await paint(canvas, memes);
     await paintPromise;
 
     return tempFile('temp-image.png').then(async (path: string) => {
